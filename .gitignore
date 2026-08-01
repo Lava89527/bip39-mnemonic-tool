@@ -1,0 +1,28 @@
+# ---- 依赖 ----
+crypto_build/node_modules/
+**/node_modules/
+
+# ---- 敏感 / 无关文件（含真实凭证与内网信息，绝不可提交）----
+ysytest.py
+安全请求测试.py
+test.py
+json.xlsx
+
+# ---- WorkBuddy 内部目录 ----
+.workbuddy/
+
+# ---- 系统 / 编辑器 ----
+.DS_Store
+Thumbs.db
+desktop.ini
+*.log
+*.tmp
+.vscode/
+.idea/
+*.swp
+
+# ---- Python ----
+__pycache__/
+*.pyc
+.venv/
+venv/

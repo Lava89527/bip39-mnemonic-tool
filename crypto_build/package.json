@@ -1,0 +1,25 @@
+{
+  "name": "crypto_build",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "@noble/curves": "^1.4.0",
+    "@noble/hashes": "^1.4.0",
+    "@scure/bip32": "^1.4.0",
+    "@scure/bip39": "^1.4.0",
+    "bech32": "^2.0.0",
+    "bs58": "^6.0.0",
+    "bs58check": "^3.0.1",
+    "esbuild": "^0.23.1",
+    "happy-dom": "^14.12.3",
+    "jsdom": "^24.1.0"
+  },
+  "type": "module"
+}
