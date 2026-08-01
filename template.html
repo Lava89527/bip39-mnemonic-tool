@@ -27,6 +27,8 @@
   .seg{display:inline-flex;background:#eef0f8;border-radius:12px;padding:4px;gap:4px}
   .seg button{border:0;background:transparent;color:var(--muted);font-size:13px;font-weight:600;padding:7px 14px;border-radius:9px;cursor:pointer;transition:.15s}
   .seg button.active{background:#fff;color:var(--ink);box-shadow:0 2px 8px rgba(40,52,90,.12)}
+  #quickFill button[data-q="rand"]{background:#eef2ff;color:#4f46e5}
+  #quickFill button[data-q="rand"]:hover{background:#e3e9ff}
   label.field{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   textarea#mnemonicInput{width:100%;min-height:96px;resize:vertical;border:1px solid var(--line);border-radius:12px;
     padding:14px;font-size:16px;line-height:1.7;font-family:"SFMono-Regular",Consolas,"PingFang SC","Microsoft YaHei",monospace;
@@ -122,6 +124,16 @@
         <div class="seg" id="langSeg">
           <button data-lang="EN" class="active">English</button>
           <button data-lang="ZH">中文</button>
+        </div>
+      </div>
+      <div class="ctl-group">
+        <span class="lbl">快速填充</span>
+        <div class="seg" id="quickFill">
+          <button data-q="rand">随机生成</button>
+          <button data-q="10">前10</button>
+          <button data-q="11">前11</button>
+          <button data-q="22">前22</button>
+          <button data-q="23">前23</button>
         </div>
       </div>
     </div>
@@ -501,6 +513,38 @@
   langSeg.addEventListener('click', e=>{
     const b=e.target.closest('button'); if(!b) return;
     setLang(b.dataset.lang);
+  });
+  function randInt(max){
+    const a = new Uint16Array(1);
+    if(window.crypto && window.crypto.getRandomValues) window.crypto.getRandomValues(a);
+    else a[0] = Math.floor(Math.random()*65536);
+    return a[0] % max;
+  }
+  function randomFullMnemonic(total){
+    const known = total - 1;
+    const list = lang==='EN'?WORDLIST_EN:WORDLIST_ZH;
+    const knownIndices = [];
+    for(let i=0;i<known;i++) knownIndices.push(randInt(2048));
+    const gen = MnemCore.completeMnemonicGen(knownIndices, list);
+    const pool = [];
+    for(const m of gen) pool.push(m);
+    return pool[randInt(pool.length)];
+  }
+  const quickFill = document.getElementById('quickFill');
+  quickFill.addEventListener('click', e=>{
+    const b = e.target.closest('button'); if(!b) return;
+    const q = b.dataset.q;
+    const list = lang==='EN'?WORDLIST_EN:WORDLIST_ZH;
+    if(q==='rand'){
+      input.value = randomFullMnemonic(12);
+      setStatus('已随机生成 12 个词（完整有效助记词）。', false);
+    } else {
+      const n = parseInt(q,10);
+      const words=[];
+      for(let i=0;i<n;i++) words.push(list[randInt(2048)]);
+      input.value = words.join(' ');
+      setStatus('已随机填充前 '+n+' 个词，点击「自动补全」查看全部合法补全。', false);
+    }
   });
   qrClose.addEventListener('click', ()=>modalEl.classList.add('hidden'));
   modalEl.addEventListener('click', e=>{ if(e.target===modalEl) modalEl.classList.add('hidden'); });
