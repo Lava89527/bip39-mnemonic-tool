@@ -63,8 +63,8 @@
   /* modal */
   .modal{position:fixed;inset:0;background:rgba(20,26,46,.55);display:flex;align-items:center;justify-content:center;z-index:50;padding:20px}
   .modal.hidden{display:none}
-  .modal-content{background:#fff;border-radius:18px;padding:22px;max-width:560px;width:100%;text-align:center;position:relative;
-    box-shadow:0 20px 60px rgba(20,26,46,.35);max-height:88vh;overflow:auto}
+  .modal-content{background:#fff;border-radius:18px;padding:22px;max-width:920px;width:100%;text-align:center;position:relative;
+    box-shadow:0 20px 60px rgba(20,26,46,.35);max-height:90vh;overflow:auto}
   .modal-content h3{margin:0 0 12px;font-size:16px}
   #qrClose{position:absolute;top:10px;right:12px;border:0;background:transparent;font-size:24px;line-height:1;color:var(--muted);cursor:pointer}
   .foot{text-align:center;color:var(--muted);font-size:12px;margin-top:8px}
@@ -83,12 +83,18 @@
   .d-copy{border:0;background:#eef0f8;color:var(--brand);font-size:11px;font-weight:600;border-radius:7px;padding:3px 8px;cursor:pointer;margin-top:5px}
   .d-copy:hover{background:#e3e7f5}
   .d-batch{margin-top:10px;font-size:13px;padding:8px 14px}
-  .d-batch-box{margin-top:8px;max-height:220px;overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
-  .d-batch-row{display:flex;gap:8px;font-size:11.5px;padding:6px 8px;border-bottom:1px solid var(--line);font-family:Consolas,monospace;align-items:center}
+  .d-batch-box{margin-top:8px;max-height:320px;overflow:auto;border:1px solid var(--line);border-radius:10px;background:#fff}
+  .d-batch-row{display:flex;gap:10px;font-size:11.5px;padding:8px 10px;border-bottom:1px solid var(--line);font-family:Consolas,monospace;align-items:center}
   .d-batch-row:last-child{border-bottom:0}
-  .d-batch-row .idx{color:var(--muted);flex:0 0 38px}
-  .d-batch-row .ba{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-  .d-batch-row .bk{color:var(--brand);flex:0 0 auto;max-width:160px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .d-batch-row .idx{color:var(--muted);flex:0 0 42px;font-weight:600}
+  .br-info{flex:1;min-width:0}
+  .br-addr,.br-key{display:flex;gap:6px;align-items:center;margin:2px 0}
+  .br-addr .ba{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .br-key .bk{color:var(--brand);flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+  .br-copy{border:0;background:#eef0f8;color:var(--brand);font-size:10.5px;font-weight:600;border-radius:6px;padding:2px 7px;cursor:pointer;flex:0 0 auto}
+  .br-copy:hover{background:#e3e7f5}
+  .br-qr{flex:0 0 auto;display:flex;gap:6px}
+  .br-qr svg{width:56px;height:56px;display:block;background:#fff;border:1px solid var(--line);border-radius:4px}
   .d-err{color:#dc2626;font-size:13px}
 </style>
 </head>
@@ -7340,7 +7346,7 @@ var qrcode = function() {
     qr.make();
     return qr.createSvgTag(2,2);
   }
-  function esc(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c])); }
+  function esc(s){ return String(s).replace(/[&<>"']/g, c=>({'&':'\u0026amp;','<':'\u0026lt;','>':'\u0026gt;','"':'\u0026quot;',"'":'\u0026#39;'}[c])); }
   function copyText(t){
     try{
       if(navigator.clipboard && window.isSecureContext){ navigator.clipboard.writeText(t).catch(()=>fallbackCopy(t)); }
@@ -7392,13 +7398,24 @@ var qrcode = function() {
       const batchBtn=document.createElement('button'); batchBtn.className='btn ghost d-batch';
       batchBtn.textContent='生成该路径前 100 个地址';
       const batchBox=document.createElement('div'); batchBox.className='d-batch-box';
+      batchBox.addEventListener('click', e=>{
+        const btn=e.target.closest('.br-copy'); if(!btn) return;
+        const row=btn.closest('.d-batch-row');
+        const val = btn.dataset.c==='priv' ? row.querySelector('.bk').textContent : row.querySelector('.ba').textContent;
+        copyText(val);
+        const old=btn.textContent; btn.textContent='已复制'; setTimeout(()=>btn.textContent=old, 800);
+      });
       batchBtn.addEventListener('click',()=>{
         const res=Derive.derivePathAddresses(mnemonic, coin, acc.path, st.start, 100);
         let html='';
         for(const r of res){
           html+='<div class="d-batch-row"><span class="idx">#'+(r.index+1)+'</span>'+
-                '<span class="ba" title="'+r.address+'">'+r.address+'</span>'+
-                '<span class="bk" title="'+r.privHex+'">'+r.privHex+'</span></div>';
+            '<div class="br-info">'+
+              '<div class="br-addr"><span class="ba" title="'+esc(r.address)+'">'+esc(r.address)+'</span><button class="br-copy" data-c="addr">复制</button></div>'+
+              '<div class="br-key"><span class="bk" title="'+esc(r.privHex)+'">'+esc(r.privHex)+'</span><button class="br-copy" data-c="priv">复制</button></div>'+
+            '</div>'+
+            '<div class="br-qr">'+makeQRsmall(r.address)+makeQRsmall(r.privHex)+'</div>'+
+          '</div>';
         }
         batchBox.insertAdjacentHTML('beforeend', html);
         st.start+=100;
