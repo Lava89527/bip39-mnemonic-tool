@@ -29,6 +29,21 @@
   .seg button.active{background:#fff;color:var(--ink);box-shadow:0 2px 8px rgba(40,52,90,.12)}
   #quickFill button[data-q="rand"]{background:#eef2ff;color:#4f46e5}
   #quickFill button[data-q="rand"]:hover{background:#e3e9ff}
+  .hidden{display:none!important}
+  .tabs{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+  .tab{border:0;background:#eef0f8;color:var(--muted);font-weight:700;font-size:14px;padding:10px 18px;border-radius:12px;cursor:pointer;transition:.15s}
+  .tab.active{background:linear-gradient(120deg,#4f46e5,#6d5efc);color:#fff;box-shadow:0 6px 18px rgba(79,70,229,.3)}
+  .word-grid{display:grid;grid-template-columns:repeat(var(--n,6),1fr);gap:8px;margin:10px 0}
+  .wcell-wrap{display:flex;align-items:center;gap:6px;background:#f6f7fb;border:1px solid var(--line);border-radius:10px;padding:5px 8px}
+  .wcell-wrap:focus-within{background:#fff;border-color:var(--brand)}
+  .widx{font-size:11px;color:var(--muted);flex:0 0 18px;text-align:right;font-family:Consolas,monospace}
+  .wcell{border:0;background:transparent;font-size:13px;width:100%;outline:none;font-family:Consolas,monospace;color:var(--ink);min-width:0}
+  .hint{font-size:12.5px;color:var(--muted);margin:4px 0 0;line-height:1.6}
+  .hint code{background:#eef0f8;padding:1px 6px;border-radius:6px;font-family:Consolas,monospace}
+  .recover-warn{margin-top:12px;background:#fff7ed;border:1px solid #fed7aa;border-radius:12px;padding:14px}
+  .rw-title{font-size:13.5px;color:#9a3412;font-weight:600;line-height:1.6}
+  .rw-tip{font-size:12.5px;color:#b45309;margin-top:6px;line-height:1.6}
+  .cap-row{display:flex;gap:10px;margin-top:10px;flex-wrap:wrap}
   label.field{display:block;font-size:13px;color:var(--muted);margin-bottom:6px}
   textarea#mnemonicInput{width:100%;min-height:96px;resize:vertical;border:1px solid var(--line);border-radius:12px;
     padding:14px;font-size:16px;line-height:1.7;font-family:"SFMono-Regular",Consolas,"PingFang SC","Microsoft YaHei",monospace;
@@ -98,20 +113,53 @@
   .br-qr{flex:0 0 auto;display:flex;gap:6px}
   .br-qr svg{width:56px;height:56px;display:block;background:#fff;border:1px solid var(--line);border-radius:4px}
   .d-err{color:#dc2626;font-size:13px}
+  /* ---- 界面语言切换 (UI language switcher) ---- */
+  #uiLangBox{position:fixed;top:12px;right:16px;z-index:60;display:flex;gap:6px;align-items:center;font-size:13px}
+  #uiLangBox button{font:inherit;cursor:pointer;border:1px solid var(--line);background:#fff;color:var(--ink);border-radius:8px;padding:5px 10px;line-height:1}
+  #uiLangBox button:hover{background:#f1f3fb}
+  #uiLangToggle{font-weight:600;color:var(--brand)}
+  #uiLangCaret{padding:5px 8px}
+  #uiLangMenu{position:absolute;top:38px;right:0;background:#fff;border:1px solid var(--line);border-radius:10px;box-shadow:0 8px 24px rgba(20,30,60,.16);padding:6px;display:flex;flex-direction:column;gap:2px;min-width:150px}
+  #uiLangMenu button{text-align:left;border:0;border-radius:7px;padding:7px 10px;display:flex;justify-content:space-between;align-items:center;gap:8px}
+  #uiLangMenu button .ul-code{color:var(--muted);font-size:11px}
+  #uiLangMenu button.active{background:var(--brand);color:#fff}
+  #uiLangMenu button.active .ul-code{color:rgba(255,255,255,.75)}
+  #uiLangMenu button:hover:not(.active){background:#eef0f8}
 </style>
 </head>
 <body>
+<div id="uiLangBox">
+  <button id="uiLangToggle" type="button" title="切换中文 / English">中 / EN</button>
+  <button id="uiLangCaret" type="button" aria-label="更多语言">▾</button>
+  <div id="uiLangMenu" class="hidden">
+    <button data-ul="zh" class="active">中文<span class="ul-code">ZH</span></button>
+    <button data-ul="en">English<span class="ul-code">EN</span></button>
+    <button data-ul="ja">日本語<span class="ul-code">JA</span></button>
+    <button data-ul="ko">한국어<span class="ul-code">KO</span></button>
+    <button data-ul="es">Español<span class="ul-code">ES</span></button>
+    <button data-ul="fr">Français<span class="ul-code">FR</span></button>
+    <button data-ul="de">Deutsch<span class="ul-code">DE</span></button>
+    <button data-ul="ru">Русский<span class="ul-code">RU</span></button>
+    <button data-ul="pt">Português<span class="ul-code">PT</span></button>
+    <button data-ul="it">Italiano<span class="ul-code">IT</span></button>
+    <button data-ul="ar">العربية<span class="ul-code">AR</span></button>
+  </div>
+</div>
 <header>
-  <h1><span class="grad">助记词自动补全</span> · BTC / ETH / SOL / SUI</h1>
-  <p>离线运行 · 输入前 10/11 或 22/23 个词，枚举所有校验合法的完整助记词 · 并派生首个地址与私钥</p>
+  <h1><span class="grad" data-i18n="appTitle">助记词自动补全</span> · BTC / ETH / SOL / SUI</h1>
+  <p data-i18n="appSub">离线运行 · 输入前 10/11 或 22/23 个词，枚举所有校验合法的完整助记词 · 并派生首个地址与私钥</p>
 </header>
 
 <div class="wrap">
-  <div class="card">
-    <h2><span class="tag">输入</span> 已知助记词</h2>
+  <div class="tabs" id="tabs">
+    <button class="tab active" data-tab="prefix" data-i18n="tabPrefix">前缀补全</button>
+    <button class="tab" data-tab="recover" data-i18n="tabRecover">缺失恢复</button>
+  </div>
+  <div class="card" id="prefixInputCard">
+    <h2><span class="tag" data-i18n="tagIn">输入</span> <span data-i18n="knownWords">已知助记词</span></h2>
     <div class="controls">
       <div class="ctl-group">
-        <span class="lbl">币种</span>
+        <span class="lbl" data-i18n="lblCoin">币种</span>
         <div class="seg" id="coinSeg">
           <button data-coin="BTC" class="active coin">₿ BTC</button>
           <button data-coin="ETH" class="coin">Ξ ETH</button>
@@ -120,56 +168,98 @@
         </div>
       </div>
       <div class="ctl-group">
-        <span class="lbl">语言</span>
+        <span class="lbl" data-i18n="lblWordLang">语言</span>
         <div class="seg" id="langSeg">
           <button data-lang="EN" class="active">English</button>
           <button data-lang="ZH">中文</button>
         </div>
       </div>
       <div class="ctl-group">
-        <span class="lbl">快速填充</span>
+        <span class="lbl" data-i18n="lblQuick">快速填充</span>
         <div class="seg" id="quickFill">
-          <button data-q="rand">随机生成</button>
-          <button data-q="10">前10</button>
-          <button data-q="11">前11</button>
-          <button data-q="22">前22</button>
-          <button data-q="23">前23</button>
+          <button data-q="rand" data-i18n="qfRand">随机生成</button>
+          <button data-q="10" data-i18n="qf10">前10</button>
+          <button data-q="11" data-i18n="qf11">前11</button>
+          <button data-q="22" data-i18n="qf22">前22</button>
+          <button data-q="23" data-i18n="qf23">前23</button>
         </div>
       </div>
     </div>
 
-    <label class="field" for="mnemonicInput">输入已知词（用空格分隔；英文输入首字母会联想，中文点选候选汉字）：</label>
-    <textarea id="mnemonicInput" placeholder="例如：abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon"></textarea>
+    <label class="field" for="mnemonicInput" data-i18n="mnemonicLabel">输入已知词（用空格分隔；英文输入首字母会联想，中文点选候选汉字）：</label>
+    <textarea id="mnemonicInput" placeholder="例如：abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon" data-i18n-ph="mnemonicPh"></textarea>
     <div class="suggestions" id="suggestions"></div>
 
     <div class="actions">
-      <button class="btn primary" id="completeBtn">自动补全</button>
-      <button class="btn ghost" id="clearBtn">清空</button>
+      <button class="btn primary" id="completeBtn" data-i18n="btnComplete">自动补全</button>
+      <button class="btn ghost" id="clearBtn" data-i18n="btnClear">清空</button>
       <span id="status"></span>
     </div>
-    <div class="warn">仅用于恢复<b>你本人</b>的助记词。本工具完全离线，数据不上传任何服务器。私钥极其敏感，请勿泄露。BTC 会列出 Legacy / Nested SegWit / Native SegWit / Taproot 四种路径。</div>
+    <div class="warn" data-i18n-html="warnSecurity">仅用于恢复<b>你本人</b>的助记词。本工具完全离线，数据不上传任何服务器。私钥极其敏感，请勿泄露。BTC 会列出 Legacy / Nested SegWit / Native SegWit / Taproot 四种路径。</div>
   </div>
 
-  <div class="card">
+  <div class="card" id="prefixOutputCard">
     <div class="output-header">
-      <h2 style="margin:0"><span class="tag">输出</span> 补全结果</h2>
+      <h2 style="margin:0"><span class="tag" data-i18n="tagOut">输出</span> <span data-i18n="outResult">补全结果</span></h2>
       <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
         <span id="resultCount"></span>
-        <button class="btn ghost" id="exportKeysBtn" disabled>导出 TXT（含地址/私钥）</button>
-        <button class="btn ghost" id="exportBtn" disabled>仅导出助记词</button>
+        <button class="btn ghost" id="exportKeysBtn" disabled data-i18n="btnExportKeys">导出 TXT（含地址/私钥）</button>
+        <button class="btn ghost" id="exportBtn" disabled data-i18n="btnExportMnemonic">仅导出助记词</button>
       </div>
     </div>
     <div class="output" id="output">
-      <div class="empty">尚未生成结果。在上方输入已知助记词后点击「自动补全」。</div>
+      <div class="empty" data-i18n="emptyPrefix">尚未生成结果。在上方输入已知助记词后点击「自动补全」。</div>
     </div>
   </div>
-  <div class="foot">BIP39 标准 · 校验和枚举 · BIP32/BIP44 派生 · 单文件离线应用</div>
+  <div class="card hidden" id="recoverInputCard">
+    <h2><span class="tag" data-i18n="tagIn">输入</span> <span data-i18n="recoverTitle">缺失词恢复</span></h2>
+    <div class="controls">
+      <div class="ctl-group">
+        <span class="lbl" data-i18n="lblLen">词数</span>
+        <div class="seg" id="recoverLen">
+          <button data-len="12" class="active">12 词</button>
+          <button data-len="24">24 词</button>
+        </div>
+      </div>
+      <div class="ctl-group">
+        <span class="lbl" data-i18n="lblWordLang">语言</span>
+        <div class="seg" id="recoverLang">
+          <button data-lang="EN" class="active">English</button>
+          <button data-lang="ZH">中文</button>
+        </div>
+      </div>
+    </div>
+    <p class="hint" data-i18n-html="recoverHint">在对应位置填入已知词，<b>留空</b>或用 <code>?</code> 表示缺失；可缺失任意一个或多个。工具枚举全部校验和（checksum）合法的助记词。</p>
+    <div class="word-grid" id="recoverGrid"></div>
+    <div class="actions">
+      <button class="btn primary" id="recoverBtn" data-i18n="btnRecover">生成合法助记词</button>
+      <button class="btn ghost" id="recoverClear" data-i18n="btnClear">清空</button>
+      <span id="recoverStatus"></span>
+    </div>
+    <div class="recover-warn hidden" id="recoverWarn"></div>
+  </div>
+
+  <div class="card hidden" id="recoverOutputCard">
+    <div class="output-header">
+      <h2 style="margin:0"><span class="tag" data-i18n="tagOut">输出</span> <span data-i18n="outRecover">恢复结果</span></h2>
+      <div style="display:flex;gap:10px;align-items:center;flex-wrap:wrap">
+        <span id="recoverResultCount"></span>
+        <button class="btn ghost" id="recoverExportKeysBtn" disabled data-i18n="btnExportKeys">导出 TXT（含地址/私钥）</button>
+        <button class="btn ghost" id="recoverExportBtn" disabled data-i18n="btnExportMnemonic">仅导出助记词</button>
+      </div>
+    </div>
+    <div class="output" id="recoverOutput">
+      <div class="empty" data-i18n="emptyRecover">尚未生成结果。在上方填写已知词后点击「生成合法助记词」。</div>
+    </div>
+  </div>
+
+  <div class="foot" data-i18n="foot">BIP39 标准 · 校验和枚举 · BIP32/BIP44 派生 · 单文件离线应用</div>
 </div>
 
 <div class="modal hidden" id="qrModal">
   <div class="modal-content detail">
     <button id="qrClose">×</button>
-    <h3>助记词详情与派生</h3>
+    <h3 data-i18n="modalTitle">助记词详情与派生</h3>
     <div id="detailBody"></div>
   </div>
 </div>
@@ -177,6 +267,498 @@
 <script>__QR_JS__</script>
 <script>__CORE_JS__</script>
 <script>__DERIVE_JS__</script>
+<script>
+(function(){
+  'use strict';
+  // ===================== UI i18n engine =====================
+  window.__I18N = {
+    zh: {
+      appTitle:"助记词自动补全", appSub:"离线运行 · 输入前 10/11 或 22/23 个词，枚举所有校验合法的完整助记词 · 并派生首个地址与私钥",
+      tabPrefix:"前缀补全", tabRecover:"缺失恢复", tagIn:"输入", tagOut:"输出", knownWords:"已知助记词",
+      lblCoin:"币种", lblWordLang:"助记词语言", lblQuick:"快速填充",
+      qfRand:"随机生成", qf10:"前10", qf11:"前11", qf22:"前22", qf23:"前23",
+      mnemonicLabel:"输入已知词（用空格分隔；英文输入首字母会联想，中文点选候选汉字）：",
+      mnemonicPh:"例如：abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+      btnComplete:"自动补全", btnClear:"清空",
+      warnSecurity:"仅用于恢复<b>你本人</b>的助记词。本工具完全离线，数据不上传任何服务器。私钥极其敏感，请勿泄露。BTC 会列出 Legacy / Nested SegWit / Native SegWit / Taproot 四种路径。",
+      outResult:"补全结果", btnExportKeys:"导出 TXT（含地址/私钥）", btnExportMnemonic:"仅导出助记词",
+      emptyPrefix:"尚未生成结果。在上方输入已知助记词后点击「自动补全」。",
+      recoverTitle:"缺失词恢复", len12:"12 词", len24:"24 词",
+      recoverHint:"在对应位置填入已知词，<b>留空</b>或用 <code>?</code> 表示缺失；可缺失任意一个或多个。工具枚举全部校验和（checksum）合法的助记词。",
+      btnRecover:"生成合法助记词", outRecover:"恢复结果",
+      emptyRecover:"尚未生成结果。在上方填写已知词后点击「生成合法助记词」。",
+      foot:"BIP39 标准 · 校验和枚举 · BIP32/BIP44 派生 · 单文件离线应用",
+      modalTitle:"助记词详情与派生",
+      sugLabelEn:"候选词（首字母联想，点击填入）：", zhCandLabel:"汉字候选（输入可筛选，点击插入）：",
+      zhMore:"…还有 {n} 个，继续输入筛选", zhFilterPh:"筛选汉字…",
+      genStatus:"生成中… {c} / {t}", done:"完成",
+      resultCount:"共 {n} 条合法助记词（{t} 词）",
+      outEmpty:"未生成结果。", cardHint:"点击查看地址/私钥与二维码 ▸",
+      capNote:"仅显示前 {cap} 条（共 {total} 条）。点击「导出」可获取全部结果（含地址/私钥）。",
+      mneHead:"助记词 (Mnemonic)", deriveFail:"派生失败：",
+      batchBtn100:"生成该路径前 100 个地址", batchBtnRange:"生成 {s}-{e} 个地址",
+      copy:"复制", copied:"已复制",
+      needWords:"请输入 10 / 11 / 22 / 23 个已知词，当前为 {n} 个。", unkWords:"无法识别的词：{w}",
+      exportConfirm:"共 {n} 条，导出含地址/私钥需逐条派生，可能较慢，是否继续？",
+      rand12:"已随机生成 12 个词（完整有效助记词）。", randN:"已随机填充前 {n} 个词，点击「自动补全」查看全部合法补全。",
+      parseErr:"无法识别的词：{w}", hugeNum:"天文数字（远超 10^16）",
+      durForever:"极长（数年以上）", durForever2:"预计需要时间极长。",
+      durMs:"{n} 毫秒", durSec:"{n} 秒", durMin:"{m} 分 {s} 秒", durHour:"{h} 小时", durDay:"{d} 天", durYear:"{y} 年",
+      recoverEmpty:"未生成结果（已知词之间可能存在冲突，无合法助记词）。", truncNote:"（已截断至前 {c} 条）",
+      warnTitle:"⚠ {m} 个词缺失，合法可能性约 <b>{n}</b> 条。预计需要 <b>{t}</b>。",
+      warnTip:"可能性过多，本工具仅展示前 {c} 个。建议使用专业离线恢复工具（如 btcrecover）以获得更高性能与并行能力。",
+      cap1w:"生成前 1 万", cap10w:"生成前 10 万", cap100:"生成前 100 个",
+      needMissing:"请至少留出一个缺失位置（留空或填 ?）。",
+      addrLabel:"地址 Address", privLabel:"私钥 Private Key", genStatusStart:"生成中… 0",
+      exporting:"导出中…", exportingProg:"导出中… {c} / {t}", mneQR:"助记词", lblLen:"词数", genStatusCount:"生成中… {c}"
+    },
+    en: {
+      appTitle:"Mnemonic Autocomplete", appSub:"Runs offline · Enter the first 10/11 or 22/23 words, enumerate all checksum-valid complete mnemonics · and derive the first address & private key",
+      tabPrefix:"Prefix Complete", tabRecover:"Recover Missing", tagIn:"Input", tagOut:"Output", knownWords:"Known Mnemonic",
+      lblCoin:"Coin", lblWordLang:"Mnemonic Language", lblQuick:"Quick Fill",
+      qfRand:"Random", qf10:"First 10", qf11:"First 11", qf22:"First 22", qf23:"First 23",
+      mnemonicLabel:"Enter known words (space-separated; English autocompletes by first letters, Chinese pick candidate characters):",
+      mnemonicPh:"e.g. abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+      btnComplete:"Autocomplete", btnClear:"Clear",
+      warnSecurity:"For recovering <b>your own</b> mnemonic only. Fully offline, no data uploaded. Private keys are extremely sensitive—never share them. BTC lists Legacy / Nested SegWit / Native SegWit / Taproot paths.",
+      outResult:"Completion Results", btnExportKeys:"Export TXT (with address/key)", btnExportMnemonic:"Export Mnemonic Only",
+      emptyPrefix:"No results yet. Enter known words above and click \"Autocomplete\".",
+      recoverTitle:"Recover Missing Words", len12:"12 words", len24:"24 words",
+      recoverHint:"Fill known words in their positions, leave <b>blank</b> or use <code>?</code> for missing; any number may be missing. Enumerates all checksum-valid mnemonics.",
+      btnRecover:"Generate Valid Mnemonics", outRecover:"Recovery Results",
+      emptyRecover:"No results yet. Fill known words above and click \"Generate Valid Mnemonics\".",
+      foot:"BIP39 standard · Checksum enumeration · BIP32/BIP44 derivation · Single-file offline app",
+      modalTitle:"Mnemonic Details & Derivation",
+      sugLabelEn:"Candidates (autocomplete by first letters, click to fill):", zhCandLabel:"Chinese candidates (type to filter, click to insert):",
+      zhMore:"…{n} more, keep typing to filter", zhFilterPh:"Filter characters…",
+      genStatus:"Generating… {c} / {t}", done:"Done",
+      resultCount:"{n} valid mnemonics ({t} words)",
+      outEmpty:"No results.", cardHint:"Click to view address/key & QR ▸",
+      capNote:"Showing first {cap} of {total}. Click \"Export\" to get all results (with address/key).",
+      mneHead:"Mnemonic (Mnemonic)", deriveFail:"Derivation failed: ",
+      batchBtn100:"Generate first 100 addresses for this path", batchBtnRange:"Generate addresses {s}-{e}",
+      copy:"Copy", copied:"Copied",
+      needWords:"Enter 10 / 11 / 22 / 23 known words; you entered {n}.", unkWords:"Unrecognized word(s): {w}",
+      exportConfirm:"{n} results; exporting with derived addresses/keys may be slow. Continue?",
+      rand12:"Randomly generated 12 words (a complete valid mnemonic).", randN:"Randomly filled first {n} words; click \"Autocomplete\" to see all valid completions.",
+      parseErr:"Unrecognized word(s): {w}", hugeNum:"astronomically large (far beyond 10^16)",
+      durForever:"extremely long (years or more)", durForever2:"estimated time is extremely long",
+      durMs:"{n} ms", durSec:"{n} s", durMin:"{m} min {s} s", durHour:"{h} h", durDay:"{d} d", durYear:"{y} y",
+      recoverEmpty:"No results (the known words may conflict; no valid mnemonic).", truncNote:" (truncated to first {c})",
+      warnTitle:"⚠ {m} words missing, about <b>{n}</b> valid possibilities. Estimated time: <b>{t}</b>.",
+      warnTip:"Too many possibilities; this tool shows only the first {c}. Use a dedicated offline recovery tool (e.g. btcrecover) for higher performance and parallelism.",
+      cap1w:"Generate first 10,000", cap10w:"Generate first 100,000", cap100:"Generate first 100",
+      needMissing:"Leave at least one position missing (blank or ?).",
+      addrLabel:"Address", privLabel:"Private Key", genStatusStart:"Generating… 0",
+      exporting:"Exporting…", exportingProg:"Exporting… {c} / {t}", mneQR:"Mnemonic", lblLen:"Word Count", genStatusCount:"Generating… {c}"
+    },
+    ja: {
+      appTitle:"ニーモニック補完", appSub:"オフライン動作 · 最初の 10/11 または 22/23 語を入力し、チェックサムが有効な全助記詞を列挙 · さらに最初のアドレスと秘密鍵を導出",
+      tabPrefix:"プレフィックス補完", tabRecover:"欠落復元", tagIn:"入力", tagOut:"出力", knownWords:"既知の助記詞",
+      lblCoin:"通貨", lblWordLang:"助記詞の言語", lblQuick:"クイック入力",
+      qfRand:"ランダム生成", qf10:"最初の10", qf11:"最初の11", qf22:"最初の22", qf23:"最初の23",
+      mnemonicLabel:"既知の単語を入力（空白区切り。英語は頭文字で候補表示、中国語は漢字を選択）：",
+      mnemonicPh:"例：abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+      btnComplete:"自動補完", btnClear:"クリア",
+      warnSecurity:"ご自身の助記詞の復元のみに使用してください。<b>あなた自身</b>のものです。完全オフラインでデータ送信はありません。秘密鍵は極めて機密性が高いため絶対に共有しないでください。BTC は Legacy / Nested SegWit / Native SegWit / Taproot の4パスを表示します。",
+      outResult:"補完結果", btnExportKeys:"TXT 書き出し（アドレス/鍵込み）", btnExportMnemonic:"助記詞のみ書き出し",
+      emptyPrefix:"まだ結果はありません。上で既知の単語を入力し「自動補完」をクリックしてください。",
+      recoverTitle:"欠落語の復元", len12:"12 語", len24:"24 語",
+      recoverHint:"該当する位置に既知の単語を入力し、欠落は<b>空欄</b>または <code>?</code> で表します。任意の数だけ欠落可能です。チェックサムが有効な全助記詞を列挙します。",
+      btnRecover:"有効な助記詞を生成", outRecover:"復元結果",
+      emptyRecover:"まだ結果はありません。上で既知の単語を入力し「有効な助記詞を生成」をクリックしてください。",
+      foot:"BIP39 準拠 · チェックサム列挙 · BIP32/BIP44 導出 · 単一ファイルのオフラインアプリ",
+      modalTitle:"助記詞の詳細と導出",
+      sugLabelEn:"候補（頭文字で候補表示、クリックで入力）：", zhCandLabel:"中国語候補（入力で絞り込み、クリックで挿入）：",
+      zhMore:"…あと {n} 件、入力を続けて絞り込み", zhFilterPh:"漢字を絞り込み…",
+      genStatus:"生成中… {c} / {t}", done:"完了",
+      resultCount:"{n} 件の有効な助記詞（{t} 語）",
+      outEmpty:"結果がありません。", cardHint:"クリックでアドレス/鍵とQRを表示 ▸",
+      capNote:"最初の {cap} 件を表示（全 {total} 件）。「書き出し」で全結果（アドレス/鍵込み）を取得できます。",
+      mneHead:"助記詞 (Mnemonic)", deriveFail:"導出失敗：",
+      batchBtn100:"このパスの最初の 100 アドレスを生成", batchBtnRange:"{s}-{e} 件のアドレスを生成",
+      copy:"コピー", copied:"コピー済み",
+      needWords:"既知の単語を 10 / 11 / 22 / 23 個入力してください。現在 {n} 個です。", unkWords:"認識できない単語：{w}",
+      exportConfirm:"{n} 件あります。アドレス/鍵を導出して書き出すと遅くなる場合があります。続行しますか？",
+      rand12:"12 語をランダム生成しました（完全な有効な助記詞）。", randN:"最初の {n} 語をランダムに入力しました。「自動補完」で全有効補完を確認してください。",
+      parseErr:"認識できない単語：{w}", hugeNum:"天文学的な数（10^16 をはるかに超える）",
+      durForever:"極めて長い（数年以上）", durForever2:"推定時間は極めて長いです",
+      durMs:"{n} ミリ秒", durSec:"{n} 秒", durMin:"{m} 分 {s} 秒", durHour:"{h} 時間", durDay:"{d} 日", durYear:"{y} 年",
+      recoverEmpty:"結果がありません（既知の単語が矛盾している可能性があります。有効な助記詞なし）。", truncNote:"（最初の {c} 件に切り詰め）",
+      warnTitle:"⚠ {m} 語欠落、有効な可能性は約 <b>{n}</b> 件。推定時間：<b>{t}</b>。",
+      warnTip:"可能性が多すぎるため、このツールは最初の {c} 件のみ表示します。より高い性能と並列処理のためには専用のオフライン復元ツール（btcrecover など）の使用をお勧めします。",
+      cap1w:"最初の 1 万を生成", cap10w:"最初の 10 万を生成", cap100:"最初の 100 を生成",
+      needMissing:"少なくとも 1 か所を欠落（空欄または ?）にしてください。",
+      addrLabel:"アドレス Address", privLabel:"秘密鍵 Private Key", genStatusStart:"生成中… 0",
+      exporting:"書き出し中…", exportingProg:"書き出し中… {c} / {t}", mneQR:"ニーモニック", lblLen:"語数", genStatusCount:"生成中… {c}"
+    },
+    ko: {
+      appTitle:"니모닉 자동 완성", appSub:"오프라인 실행 · 처음 10/11 또는 22/23 단어를 입력하면 체크섬이 유효한 모든 니모닉을 나열 · 첫 주소와 개인키 파생",
+      tabPrefix:"접두사 완성", tabRecover:"누락 복원", tagIn:"입력", tagOut:"출력", knownWords:"알려진 니모닉",
+      lblCoin:"코인", lblWordLang:"니모닉 언어", lblQuick:"빠른 채우기",
+      qfRand:"무작위 생성", qf10:"처음 10", qf11:"처음 11", qf22:"처음 22", qf23:"처음 23",
+      mnemonicLabel:"알려진 단어 입력 (공백 구분; 영어는 첫 글자 자동 완성, 중국어는 한자 선택):",
+      mnemonicPh:"예: abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+      btnComplete:"자동 완성", btnClear:"지우기",
+      warnSecurity:"본인의 니모닉 복구용으로만 사용하세요. 완전 오프라인이며 데이터를 전송하지 않습니다. 개인키는 매우 민감하므로 절대 유출하지 마세요. BTC는 Legacy / Nested SegWit / Native SegWit / Taproot 경로를 표시합니다.",
+      outResult:"완성 결과", btnExportKeys:"TXT 내보내기 (주소/키 포함)", btnExportMnemonic:"니모닉만 내보내기",
+      emptyPrefix:"아직 결과가 없습니다. 위에 알려진 단어를 입력하고 \"자동 완성\"을 클릭하세요.",
+      recoverTitle:"누락 단어 복원", len12:"12 단어", len24:"24 단어",
+      recoverHint:"해당 위치에 알려진 단어를 입력하고, 누락은 <b>비움</b> 또는 <code>?</code> 로 표시하세요. 여러 개를 동시에 비울 수 있습니다. 체크섬이 유효한 모든 니모닉을 나열합니다.",
+      btnRecover:"유효한 니모닉 생성", outRecover:"복원 결과",
+      emptyRecover:"아직 결과가 없습니다. 위에 알려진 단어를 입력하고 \"유효한 니모닉 생성\"을 클릭하세요.",
+      foot:"BIP39 표준 · 체크섬 열거 · BIP32/BIP44 파생 · 단일 파일 오프라인 앱",
+      modalTitle:"니모닉 상세 및 파생",
+      sugLabelEn:"후보 (첫 글자 자동 완성, 클릭하여 입력):", zhCandLabel:"중국어 후보 (입력하여 필터, 클릭하여 삽입):",
+      zhMore:"…{n} 개 더, 계속 입력하여 필터", zhFilterPh:"한자 필터…",
+      genStatus:"생성 중… {c} / {t}", done:"완료",
+      resultCount:"{n} 개의 유효한 니모닉 ({t} 단어)",
+      outEmpty:"결과 없음.", cardHint:"클릭하여 주소/키 및 QR 보기 ▸",
+      capNote:"처음 {cap} 개 표시 (전체 {total} 개). \"내보내기\"를 클릭하면 전체 결과(주소/키 포함)를 받을 수 있습니다.",
+      mneHead:"니모닉 (Mnemonic)", deriveFail:"파생 실패: ",
+      batchBtn100:"이 경로의 처음 100 개 주소 생성", batchBtnRange:"{s}-{e} 개 주소 생성",
+      copy:"복사", copied:"복사됨",
+      needWords:"알려진 단어 10 / 11 / 22 / 23 개를 입력하세요. 현재 {n} 개입니다.", unkWords:"인식할 수 없는 단어: {w}",
+      exportConfirm:"{n} 개입니다. 주소/키를 파생하여 내보내면 느릴 수 있습니다. 계속할까요?",
+      rand12:"12 단어를 무작위 생성했습니다 (완전히 유효한 니모닉).", randN:"처음 {n} 단어를 무작위로 채웠습니다. \"자동 완성\"을 클릭하여 모든 유효한 완성을 보세요.",
+      parseErr:"인식할 수 없는 단어: {w}", hugeNum:"천문학적 수 (10^16 훨씬 초과)",
+      durForever:"매우 김 (수년 이상)", durForever2:"예상 소요 시간이 매우 깁니다",
+      durMs:"{n} 밀리초", durSec:"{n} 초", durMin:"{m} 분 {s} 초", durHour:"{h} 시간", durDay:"{d} 일", durYear:"{y} 년",
+      recoverEmpty:"결과 없음 (알려진 단어가 충돌할 수 있음, 유효한 니모닉 없음).", truncNote:" (처음 {c} 개로 잘림)",
+      warnTitle:"⚠ {m} 단어 누락, 유효한 가능성 약 <b>{n}</b> 개. 예상 시간: <b>{t}</b>.",
+      warnTip:"가능성이 너무 많아 이 도구는 처음 {c} 개만 표시합니다. 더 높은 성능과 병렬 처리를 위해 전용 오프라인 복구 도구(btcrecover 등) 사용을 권장합니다.",
+      cap1w:"처음 1만 개 생성", cap10w:"처음 10만 개 생성", cap100:"처음 100 개 생성",
+      needMissing:"최소 한 위치를 비우세요 (빈칸 또는 ?).",
+      addrLabel:"주소 Address", privLabel:"개인키 Private Key", genStatusStart:"생성 중… 0",
+      exporting:"내보내는 중…", exportingProg:"내보내는 중… {c} / {t}", mneQR:"니모닉", lblLen:"단어 수", genStatusCount:"생성 중… {c}"
+    },
+    es: {
+      appTitle:"Autocompletar mnemónico", appSub:"Funciona sin conexión · Introduce las primeras 10/11 o 22/23 palabras, enumera todas las mnemónicas completas válidas por checksum · y deriva la primera dirección y clave privada",
+      tabPrefix:"Completar prefijo", tabRecover:"Recuperar faltantes", tagIn:"Entrada", tagOut:"Salida", knownWords:"Mnemónico conocido",
+      lblCoin:"Moneda", lblWordLang:"Idioma del mnemónico", lblQuick:"Relleno rápido",
+      qfRand:"Aleatorio", qf10:"Primeras 10", qf11:"Primeras 11", qf22:"Primeras 22", qf23:"Primeras 23",
+      mnemonicLabel:"Introduce palabras conocidas (separadas por espacios; en inglés autocompleta por iniciales, en chino elige caracteres):",
+      mnemonicPh:"ej. abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+      btnComplete:"Autocompletar", btnClear:"Limpiar",
+      warnSecurity:"Solo para recuperar <b>tu propio</b> mnemónico. Totalmente sin conexión, sin envío de datos. Las claves privadas son extremadamente sensibles, no las compartas. BTC muestra rutas Legacy / Nested SegWit / Native SegWit / Taproot.",
+      outResult:"Resultados", btnExportKeys:"Exportar TXT (con dirección/clave)", btnExportMnemonic:"Solo mnemónico",
+      emptyPrefix:"Aún no hay resultados. Introduce palabras arriba y haz clic en \"Autocompletar\".",
+      recoverTitle:"Recuperar palabras faltantes", len12:"12 palabras", len24:"24 palabras",
+      recoverHint:"Rellena las palabras conocidas en su posición, deja <b>en blanco</b> o usa <code>?</code> para las faltantes; pueden faltar varias. Enumera todas las mnemónicas válidas por checksum.",
+      btnRecover:"Generar mnemónicos válidos", outRecover:"Resultados de recuperación",
+      emptyRecover:"Aún no hay resultados. Rellena palabras arriba y haz clic en \"Generar mnemónicos válidos\".",
+      foot:"Estándar BIP39 · Enumeración por checksum · Derivación BIP32/BIP44 · App de un solo archivo sin conexión",
+      modalTitle:"Detalles y derivación del mnemónico",
+      sugLabelEn:"Candidatos (autocompletar por iniciales, clic para rellenar):", zhCandLabel:"Candidatos chinos (escribe para filtrar, clic para insertar):",
+      zhMore:"…{n} más, sigue escribiendo para filtrar", zhFilterPh:"Filtrar caracteres…",
+      genStatus:"Generando… {c} / {t}", done:"Listo",
+      resultCount:"{n} mnemónicos válidos ({t} palabras)",
+      outEmpty:"Sin resultados.", cardHint:"Clic para ver dirección/clave y QR ▸",
+      capNote:"Mostrando primeros {cap} de {total}. Haz clic en \"Exportar\" para obtener todos (con dirección/clave).",
+      mneHead:"Mnemónico (Mnemonic)", deriveFail:"Error de derivación: ",
+      batchBtn100:"Generar primeras 100 direcciones de esta ruta", batchBtnRange:"Generar direcciones {s}-{e}",
+      copy:"Copiar", copied:"Copiado",
+      needWords:"Introduce 10 / 11 / 22 / 23 palabras conocidas; has introducido {n}.", unkWords:"Palabra(s) no reconocida(s): {w}",
+      exportConfirm:"{n} resultados; exportar con direcciones/claves derivadas puede ser lento. ¿Continuar?",
+      rand12:"Se generaron 12 palabras al azar (un mnemónico válido completo).", randN:"Se rellenaron al azar las primeras {n} palabras; haz clic en \"Autocompletar\" para ver todas las completaciones válidas.",
+      parseErr:"Palabra(s) no reconocida(s): {w}", hugeNum:"cantidad astronómica (muy por encima de 10^16)",
+      durForever:"extremadamente largo (años o más)", durForever2:"el tiempo estimado es extremadamente largo",
+      durMs:"{n} ms", durSec:"{n} s", durMin:"{m} min {s} s", durHour:"{h} h", durDay:"{d} d", durYear:"{y} a",
+      recoverEmpty:"Sin resultados (las palabras conocidas pueden conflictuar; ningún mnemónico válido).", truncNote:" (truncado a los primeros {c})",
+      warnTitle:"⚠ Faltan {m} palabras, unas <b>{n}</b> posibilidades válidas. Tiempo estimado: <b>{t}</b>.",
+      warnTip:"Demasiadas posibilidades; esta herramienta muestra solo las primeras {c}. Usa una herramienta de recuperación offline dedicada (p. ej. btcrecover) para mayor rendimiento y paralelismo.",
+      cap1w:"Generar primeros 10.000", cap10w:"Generar primeros 100.000", cap100:"Generar primeros 100",
+      needMissing:"Deja al menos una posición faltante (en blanco o ?).",
+      addrLabel:"Dirección", privLabel:"Clave privada", genStatusStart:"Generando… 0",
+      exporting:"Exportando…", exportingProg:"Exportando… {c} / {t}", mneQR:"Mnemónico", lblLen:"Nº de palabras", genStatusCount:"Generando… {c}"
+    },
+    fr: {
+      appTitle:"Auto-complétion de mnémonique", appSub:"Fonctionne hors ligne · Saisissez les 10/11 ou 22/23 premiers mots, énumère toutes les mnémoniques complètes valides (checksum) · et dérive la première adresse et clé privée",
+      tabPrefix:"Compléter le préfixe", tabRecover:"Récupérer les manquants", tagIn:"Entrée", tagOut:"Sortie", knownWords:"Mnémonique connue",
+      lblCoin:"Monnaie", lblWordLang:"Langue de la mnémonique", lblQuick:"Remplissage rapide",
+      qfRand:"Aléatoire", qf10:"10 premiers", qf11:"11 premiers", qf22:"22 premiers", qf23:"23 premiers",
+      mnemonicLabel:"Saisissez les mots connus (séparés par des espaces ; en anglais autocomplétion par initiales, en chinois choisissez les caractères) :",
+      mnemonicPh:"ex. abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+      btnComplete:"Auto-compléter", btnClear:"Effacer",
+      warnSecurity:"À utiliser uniquement pour récupérer <b>votre propre</b> mnémonique. Totalement hors ligne, aucune donnée envoyée. Les clés privées sont extrêmement sensibles, ne les divulguez pas. BTC liste les chemins Legacy / Nested SegWit / Native SegWit / Taproot.",
+      outResult:"Résultats", btnExportKeys:"Exporter TXT (avec adresse/clé)", btnExportMnemonic:"Mnémonique seule",
+      emptyPrefix:"Aucun résultat pour l'instant. Saisissez les mots connus ci-dessus et cliquez sur « Auto-compléter ».",
+      recoverTitle:"Récupérer les mots manquants", len12:"12 mots", len24:"24 mots",
+      recoverHint:"Remplissez les mots connus à leur position, laissez <b>vide</b> ou utilisez <code>?</code> pour les manquants ; plusieurs peuvent manquer. Énumère toutes les mnémoniques valides par checksum.",
+      btnRecover:"Générer les mnémoniques valides", outRecover:"Résultats de récupération",
+      emptyRecover:"Aucun résultat pour l'instant. Remplissez les mots connus ci-dessus et cliquez sur « Générer les mnémoniques valides ».",
+      foot:"Standard BIP39 · Énumération par checksum · Dérivation BIP32/BIP44 · Application hors ligne en un fichier",
+      modalTitle:"Détails et dérivation de la mnémonique",
+      sugLabelEn:"Candidats (autocomplétion par initiales, clic pour remplir) :", zhCandLabel:"Candidats chinois (tapez pour filtrer, clic pour insérer) :",
+      zhMore:"…{n} de plus, continuez à taper pour filtrer", zhFilterPh:"Filtrer les caractères…",
+      genStatus:"Génération… {c} / {t}", done:"Terminé",
+      resultCount:"{n} mnémoniques valides ({t} mots)",
+      outEmpty:"Aucun résultat.", cardHint:"Cliquez pour voir l'adresse/la clé et le QR ▸",
+      capNote:"Affichage des premiers {cap} sur {total}. Cliquez sur « Exporter » pour obtenir tous les résultats (avec adresse/clé).",
+      mneHead:"Mnémonique (Mnemonic)", deriveFail:"Échec de la dérivation : ",
+      batchBtn100:"Générer les 100 premières adresses de ce chemin", batchBtnRange:"Générer les adresses {s}-{e}",
+      copy:"Copier", copied:"Copié",
+      needWords:"Saisissez 10 / 11 / 22 / 23 mots connus ; vous en avez saisi {n}.", unkWords:"Mot(s) non reconnu(s) : {w}",
+      exportConfirm:"{n} résultats ; l'export avec adresses/clés dérivées peut être lent. Continuer ?",
+      rand12:"12 mots générés aléatoirement (une mnémonique valide complète).", randN:"Les {n} premiers mots ont été remplis aléatoirement ; cliquez sur « Auto-compléter » pour voir toutes les complétions valides.",
+      parseErr:"Mot(s) non reconnu(s) : {w}", hugeNum:"nombre astronomique (bien au-delà de 10^16)",
+      durForever:"extrêmement long (plusieurs années)", durForever2:"le temps estimé est extrêmement long",
+      durMs:"{n} ms", durSec:"{n} s", durMin:"{m} min {s} s", durHour:"{h} h", durDay:"{d} j", durYear:"{y} an",
+      recoverEmpty:"Aucun résultat (les mots connus peuvent être en conflit ; aucune mnémonique valide).", truncNote:" (tronqué aux premiers {c})",
+      warnTitle:"⚠ {m} mots manquants, environ <b>{n}</b> possibilités valides. Temps estimé : <b>{t}</b>.",
+      warnTip:"Trop de possibilités ; cet outil n'affiche que les premiers {c}. Utilisez un outil de récupération offline dédié (ex. btcrecover) pour de meilleures performances et le parallélisme.",
+      cap1w:"Générer les 10 000 premiers", cap10w:"Générer les 100 000 premiers", cap100:"Générer les 100 premiers",
+      needMissing:"Laissez au moins une position manquante (vide ou ?).",
+      addrLabel:"Adresse", privLabel:"Clé privée", genStatusStart:"Génération… 0",
+      exporting:"Exportation…", exportingProg:"Exportation… {c} / {t}", mneQR:"Mnémonique", lblLen:"Nombre de mots", genStatusCount:"Génération… {c}"
+    },
+    de: {
+      appTitle:"Mnemonic-Autovervollständigung", appSub:"Läuft offline · Gib die ersten 10/11 oder 22/23 Wörter ein, liste alle per Prüfsumme gültigen kompletten Mnemonics auf · und leite die erste Adresse und den privaten Schlüssel ab",
+      tabPrefix:"Präfix vervollständigen", tabRecover:"Fehlende wiederherstellen", tagIn:"Eingabe", tagOut:"Ausgabe", knownWords:"Bekanntes Mnemonic",
+      lblCoin:"Münze", lblWordLang:"Mnemonic-Sprache", lblQuick:"Schnellfüllen",
+      qfRand:"Zufällig", qf10:"Erste 10", qf11:"Erste 11", qf22:"Erste 22", qf23:"Erste 23",
+      mnemonicLabel:"Bekannte Wörter eingeben (Leerzeichen-getrennt; Englisch autovervollständigt nach Anfangsbuchstaben, Chinesisch Zeichen wählen):",
+      mnemonicPh:"z. B. abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+      btnComplete:"Autovervollständigen", btnClear:"Leeren",
+      warnSecurity:"Nur zum Wiederherstellen <b>deines eigenen</b> Mnemonics. Völlig offline, keine Datenübertragung. Private Schlüssel sind extrem sensibel, nicht teilen. BTC listet Legacy / Nested SegWit / Native SegWit / Taproot-Pfade.",
+      outResult:"Ergebnisse", btnExportKeys:"TXT exportieren (mit Adresse/Schlüssel)", btnExportMnemonic:"Nur Mnemonic",
+      emptyPrefix:"Noch keine Ergebnisse. Gib oben bekannte Wörter ein und klicke auf \"Autovervollständigen\".",
+      recoverTitle:"Fehlende Wörter wiederherstellen", len12:"12 Wörter", len24:"24 Wörter",
+      recoverHint:"Bekannte Wörter an ihrer Position eintragen, <b>leer</b> lassen oder <code>?</code> für fehlende verwenden; mehrere können fehlen. Listet alle per Prüfsumme gültigen Mnemonics auf.",
+      btnRecover:"Gültige Mnemonics erzeugen", outRecover:"Wiederherstellungsergebnisse",
+      emptyRecover:"Noch keine Ergebnisse. Trage oben bekannte Wörter ein und klicke auf \"Gültige Mnemonics erzeugen\".",
+      foot:"BIP39-Standard · Prüfsummen-Aufzählung · BIP32/BIP44-Ableitung · Einzeldatei-Offline-App",
+      modalTitle:"Mnemonic-Details & Ableitung",
+      sugLabelEn:"Kandidaten (Autovervollständigung nach Anfangsbuchstaben, Klick zum Einfügen):", zhCandLabel:"Chinesische Kandidaten (tippen zum Filtern, Klick zum Einfügen):",
+      zhMore:"…noch {n}, weitertippen zum Filtern", zhFilterPh:"Zeichen filtern…",
+      genStatus:"Erzeuge… {c} / {t}", done:"Fertig",
+      resultCount:"{n} gültige Mnemonics ({t} Wörter)",
+      outEmpty:"Keine Ergebnisse.", cardHint:"Klicken für Adresse/Schlüssel & QR ▸",
+      capNote:"Zeige erste {cap} von {total}. Klicke auf \"Exportieren\", um alle Ergebnisse (mit Adresse/Schlüssel) zu erhalten.",
+      mneHead:"Mnemonic (Mnemonic)", deriveFail:"Ableitung fehlgeschlagen: ",
+      batchBtn100:"Erste 100 Adressen dieses Pfads erzeugen", batchBtnRange:"Adressen {s}-{e} erzeugen",
+      copy:"Kopieren", copied:"Kopiert",
+      needWords:"Gib 10 / 11 / 22 / 23 bekannte Wörter ein; du hast {n} eingegeben.", unkWords:"Nicht erkanntes Wort/Wörter: {w}",
+      exportConfirm:"{n} Ergebnisse; Export mit abgeleiteten Adressen/Schlüsseln kann langsam sein. Fortfahren?",
+      rand12:"12 Wörter zufällig erzeugt (ein komplettes gültiges Mnemonic).", randN:"Erste {n} Wörter zufällig gefüllt; klicke auf \"Autovervollständigen\" für alle gültigen Ergänzungen.",
+      parseErr:"Nicht erkanntes Wort/Wörter: {w}", hugeNum:"astronomisch groß (weit über 10^16)",
+      durForever:"extrem lang (Jahre oder mehr)", durForever2:"geschätzte Zeit ist extrem lang",
+      durMs:"{n} ms", durSec:"{n} s", durMin:"{m} Min {s} s", durHour:"{h} h", durDay:"{d} T", durYear:"{y} J",
+      recoverEmpty:"Keine Ergebnisse (bekannte Wörter können widersprüchlich sein; kein gültiges Mnemonic).", truncNote:" (auf erste {c} gekürzt)",
+      warnTitle:"⚠ {m} Wörter fehlen, etwa <b>{n}</b> gültige Möglichkeiten. Geschätzte Zeit: <b>{t}</b>.",
+      warnTip:"Zu viele Möglichkeiten; dieses Werkzeug zeigt nur die ersten {c}. Nutze ein dediziertes Offline-Wiederherstellungstool (z. B. btcrecover) für höhere Leistung und Parallelität.",
+      cap1w:"Erste 10.000 erzeugen", cap10w:"Erste 100.000 erzeugen", cap100:"Erste 100 erzeugen",
+      needMissing:"Lass mindestens eine Position frei (leer oder ?).",
+      addrLabel:"Adresse", privLabel:"Privater Schlüssel", genStatusStart:"Erzeuge… 0",
+      exporting:"Exportiere…", exportingProg:"Exportiere… {c} / {t}", mneQR:"Mnemonic", lblLen:"Wortanzahl", genStatusCount:"Erzeuge… {c}"
+    },
+    ru: {
+      appTitle:"Автодополнение мнемоники", appSub:"Работает офлайн · Введите первые 10/11 или 22/23 слов, перечислите все полные мнемоники с корректной контрольной суммой · и выведите первый адрес и закрытый ключ",
+      tabPrefix:"Дополнить префикс", tabRecover:"Восстановить пропущенные", tagIn:"Ввод", tagOut:"Вывод", knownWords:"Известная мнемоника",
+      lblCoin:"Монета", lblWordLang:"Язык мнемоники", lblQuick:"Быстрое заполнение",
+      qfRand:"Случайно", qf10:"Первые 10", qf11:"Первые 11", qf22:"Первые 22", qf23:"Первые 23",
+      mnemonicLabel:"Введите известные слова (через пробел; для английского — автодополнение по первым буквам, для китайского — выбор иероглифов):",
+      mnemonicPh:"напр. abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+      btnComplete:"Автодополнить", btnClear:"Очистить",
+      warnSecurity:"Только для восстановления <b>вашей собственной</b> мнемоники. Полностью офлайн, данные не передаются. Закрытые ключи крайне чувствительны — не раскрывайте их. BTC выводит пути Legacy / Nested SegWit / Native SegWit / Taproot.",
+      outResult:"Результаты", btnExportKeys:"Экспорт TXT (с адресом/ключом)", btnExportMnemonic:"Только мнемоника",
+      emptyPrefix:"Результатов пока нет. Введите известные слова выше и нажмите «Автодополнить».",
+      recoverTitle:"Восстановить пропущенные слова", len12:"12 слов", len24:"24 слова",
+      recoverHint:"Заполните известные слова в их позициях, оставьте <b>пустым</b> или используйте <code>?</code> для пропущенных; может отсутствовать несколько. Перечисляет все мнемоники с корректной контрольной суммой.",
+      btnRecover:"Сгенерировать допустимые мнемоники", outRecover:"Результаты восстановления",
+      emptyRecover:"Результатов пока нет. Заполните известные слова выше и нажмите «Сгенерировать допустимые мнемоники».",
+      foot:"Стандарт BIP39 · Перебор по контрольной сумме · Вывод BIP32/BIP44 · Офлайн-приложение в одном файле",
+      modalTitle:"Детали и вывод мнемоники",
+      sugLabelEn:"Кандидаты (автодополнение по первым буквам, клик чтобы вставить):", zhCandLabel:"Китайские кандидаты (ввод для фильтра, клик чтобы вставить):",
+      zhMore:"…ещё {n}, продолжайте ввод для фильтра", zhFilterPh:"Фильтр иероглифов…",
+      genStatus:"Генерация… {c} / {t}", done:"Готово",
+      resultCount:"{n} допустимых мнемоник ({t} слов)",
+      outEmpty:"Нет результатов.", cardHint:"Нажмите для просмотра адреса/ключа и QR ▸",
+      capNote:"Показаны первые {cap} из {total}. Нажмите «Экспорт», чтобы получить все результаты (с адресом/ключом).",
+      mneHead:"Мнемоника (Mnemonic)", deriveFail:"Ошибка вывода: ",
+      batchBtn100:"Сгенерировать первые 100 адресов этого пути", batchBtnRange:"Сгенерировать адреса {s}-{e}",
+      copy:"Копировать", copied:"Скопировано",
+      needWords:"Введите 10 / 11 / 22 / 23 известных слова; введено {n}.", unkWords:"Неизвестное слово(а): {w}",
+      exportConfirm:"{n} результатов; экспорт с выведенными адресами/ключами может быть медленным. Продолжить?",
+      rand12:"Случайно сгенерировано 12 слов (полная допустимая мнемоника).", randN:"Случайно заполнены первые {n} слов; нажмите «Автодополнить» для всех допустимых дополнений.",
+      parseErr:"Неизвестное слово(а): {w}", hugeNum:"астрономически велико (намного больше 10^16)",
+      durForever:"чрезвычайно долго (годы и более)", durForever2:"расчётное время чрезвычайно велико",
+      durMs:"{n} мс", durSec:"{n} с", durMin:"{m} мин {s} с", durHour:"{h} ч", durDay:"{d} д", durYear:"{y} л",
+      recoverEmpty:"Нет результатов (известные слова могут конфликтовать; нет допустимой мнемоники).", truncNote:" (обрезано до первых {c})",
+      warnTitle:"⚠ Пропущено {m} слов, около <b>{n}</b> допустимых вариантов. Расчётное время: <b>{t}</b>.",
+      warnTip:"Слишком много вариантов; этот инструмент показывает только первые {c}. Используйте специализированный офлайн-инструмент восстановления (напр. btcrecover) для большей производительности и параллелизма.",
+      cap1w:"Сгенерировать первые 10 000", cap10w:"Сгенерировать первые 100 000", cap100:"Сгенерировать первые 100",
+      needMissing:"Оставьте хотя бы одну позицию пустой (пробел или ?).",
+      addrLabel:"Адрес", privLabel:"Закрытый ключ", genStatusStart:"Генерация… 0",
+      exporting:"Экспорт…", exportingProg:"Экспорт… {c} / {t}", mneQR:"Мнемоника", lblLen:"Число слов", genStatusCount:"Генерация… {c}"
+    },
+    pt: {
+      appTitle:"Autocompletar mnemônico", appSub:"Funciona offline · Digite as primeiras 10/11 ou 22/23 palavras, enumera todas as mnemônicas completas válidas por checksum · e deriva o primeiro endereço e chave privada",
+      tabPrefix:"Completar prefixo", tabRecover:"Recuperar faltantes", tagIn:"Entrada", tagOut:"Saída", knownWords:"Mnemônico conhecido",
+      lblCoin:"Moeda", lblWordLang:"Idioma do mnemônico", lblQuick:"Preenchimento rápido",
+      qfRand:"Aleatório", qf10:"Primeiras 10", qf11:"Primeiras 11", qf22:"Primeiras 22", qf23:"Primeiras 23",
+      mnemonicLabel:"Digite palavras conhecidas (separadas por espaço; em inglês autocompleta por iniciais, em chinês escolha caracteres):",
+      mnemonicPh:"ex. abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+      btnComplete:"Autocompletar", btnClear:"Limpar",
+      warnSecurity:"Apenas para recuperar <b>seu próprio</b> mnemônico. Totalmente offline, sem envio de dados. Chaves privadas são extremamente sensíveis, não as compartilhe. BTC lista os caminhos Legacy / Nested SegWit / Native SegWit / Taproot.",
+      outResult:"Resultados", btnExportKeys:"Exportar TXT (com endereço/chave)", btnExportMnemonic:"Só mnemônico",
+      emptyPrefix:"Ainda não há resultados. Digite as palavras conhecidas acima e clique em \"Autocompletar\".",
+      recoverTitle:"Recuperar palavras faltantes", len12:"12 palavras", len24:"24 palavras",
+      recoverHint:"Preencha as palavras conhecidas em suas posições, deixe <b>em branco</b> ou use <code>?</code> para as faltantes; várias podem faltar. Enumera todas as mnemônicas válidas por checksum.",
+      btnRecover:"Gerar mnemônicos válidos", outRecover:"Resultados da recuperação",
+      emptyRecover:"Ainda não há resultados. Preencha as palavras conhecidas acima e clique em \"Gerar mnemônicos válidos\".",
+      foot:"Padrão BIP39 · Enumeração por checksum · Derivação BIP32/BIP44 · App offline de arquivo único",
+      modalTitle:"Detalhes e derivação do mnemônico",
+      sugLabelEn:"Candidatos (autocompletar por iniciais, clique para preencher):", zhCandLabel:"Candidatos chineses (digite para filtrar, clique para inserir):",
+      zhMore:"…mais {n}, continue digitando para filtrar", zhFilterPh:"Filtrar caracteres…",
+      genStatus:"Gerando… {c} / {t}", done:"Concluído",
+      resultCount:"{n} mnemônicos válidos ({t} palavras)",
+      outEmpty:"Sem resultados.", cardHint:"Clique para ver endereço/chave e QR ▸",
+      capNote:"Exibindo primeiros {cap} de {total}. Clique em \"Exportar\" para obter todos (com endereço/chave).",
+      mneHead:"Mnemônico (Mnemonic)", deriveFail:"Falha na derivação: ",
+      batchBtn100:"Gerar primeiros 100 endereços deste caminho", batchBtnRange:"Gerar endereços {s}-{e}",
+      copy:"Copiar", copied:"Copiado",
+      needWords:"Digite 10 / 11 / 22 / 23 palavras conhecidas; você digitou {n}.", unkWords:"Palavra(s) não reconhecida(s): {w}",
+      exportConfirm:"{n} resultados; exportar com endereços/chaves derivados pode ser lento. Continuar?",
+      rand12:"12 palavras geradas aleatoriamente (um mnemônico válido completo).", randN:"As primeiras {n} palavras foram preenchidas aleatoriamente; clique em \"Autocompletar\" para ver todas as completações válidas.",
+      parseErr:"Palavra(s) não reconhecida(s): {w}", hugeNum:"quantidade astronômica (muito além de 10^16)",
+      durForever:"extremamente longo (anos ou mais)", durForever2:"o tempo estimado é extremamente longo",
+      durMs:"{n} ms", durSec:"{n} s", durMin:"{m} min {s} s", durHour:"{h} h", durDay:"{d} d", durYear:"{y} a",
+      recoverEmpty:"Sem resultados (as palavras conhecidas podem conflitar; nenhum mnemônico válido).", truncNote:" (truncado aos primeiros {c})",
+      warnTitle:"⚠ Faltam {m} palavras, cerca de <b>{n}</b> possibilidades válidas. Tempo estimado: <b>{t}</b>.",
+      warnTip:"Muitas possibilidades; esta ferramenta mostra apenas as primeiras {c}. Use uma ferramenta de recuperação offline dedicada (ex. btcrecover) para melhor desempenho e paralelismo.",
+      cap1w:"Gerar primeiros 10.000", cap10w:"Gerar primeiros 100.000", cap100:"Gerar primeiros 100",
+      needMissing:"Deixe ao menos uma posição faltante (em branco ou ?).",
+      addrLabel:"Endereço", privLabel:"Chave privada", genStatusStart:"Gerando… 0",
+      exporting:"Exportando…", exportingProg:"Exportando… {c} / {t}", mneQR:"Mnemônico", lblLen:"Nº de palavras", genStatusCount:"Gerando… {c}"
+    },
+    it: {
+      appTitle:"Autocompletamento mnemonic", appSub:"Funziona offline · Inserisci le prime 10/11 o 22/23 parole, elenca tutte le mnemonic complete valide tramite checksum · e deriva il primo indirizzo e la chiave privata",
+      tabPrefix:"Completa prefisso", tabRecover:"Recupera mancanti", tagIn:"Input", tagOut:"Output", knownWords:"Mnemonic nota",
+      lblCoin:"Valuta", lblWordLang:"Lingua del mnemonic", lblQuick:"Riempimento rapido",
+      qfRand:"Casuale", qf10:"Prime 10", qf11:"Prime 11", qf22:"Prime 22", qf23:"Prime 23",
+      mnemonicLabel:"Inserisci parole note (separate da spazi; in inglese autocompleta per iniziali, in cinese scegli i caratteri):",
+      mnemonicPh:"es. abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+      btnComplete:"Autocompleta", btnClear:"Pulisci",
+      warnSecurity:"Solo per recuperare <b>il tuo proprio</b> mnemonic. Totalmente offline, nessun dato inviato. Le chiavi private sono estremamente sensibili, non condividerle. BTC elenca i percorsi Legacy / Nested SegWit / Native SegWit / Taproot.",
+      outResult:"Risultati", btnExportKeys:"Esporta TXT (con indirizzo/chiave)", btnExportMnemonic:"Solo mnemonic",
+      emptyPrefix:"Nessun risultato ancora. Inserisci le parole note sopra e clicca \"Autocompleta\".",
+      recoverTitle:"Recupera parole mancanti", len12:"12 parole", len24:"24 parole",
+      recoverHint:"Inserisci le parole note nelle loro posizioni, lascia <b>vuoto</b> o usa <code>?</code> per le mancanti; possono mancarne diverse. Elenca tutte le mnemonic valide tramite checksum.",
+      btnRecover:"Genera mnemonic valide", outRecover:"Risultati recupero",
+      emptyRecover:"Nessun risultato ancora. Inserisci le parole note sopra e clicca \"Genera mnemonic valide\".",
+      foot:"Standard BIP39 · Enumerazione per checksum · Derivazione BIP32/BIP44 · App offline in un file",
+      modalTitle:"Dettagli e derivazione del mnemonic",
+      sugLabelEn:"Candidati (autocompleta per iniziali, clic per inserire):", zhCandLabel:"Candidati cinesi (digita per filtrare, clic per inserire):",
+      zhMore:"…altri {n}, continua a digitare per filtrare", zhFilterPh:"Filtra caratteri…",
+      genStatus:"Generazione… {c} / {t}", done:"Fatto",
+      resultCount:"{n} mnemonic valide ({t} parole)",
+      outEmpty:"Nessun risultato.", cardHint:"Clic per vedere indirizzo/chiave e QR ▸",
+      capNote:"Mostrati primi {cap} di {total}. Clicca \"Esporta\" per ottenere tutti i risultati (con indirizzo/chiave).",
+      mneHead:"Mnemonic (Mnemonic)", deriveFail:"Derivazione fallita: ",
+      batchBtn100:"Genera prime 100 indirizzi di questo percorso", batchBtnRange:"Genera indirizzi {s}-{e}",
+      copy:"Copia", copied:"Copiato",
+      needWords:"Inserisci 10 / 11 / 22 / 23 parole note; ne hai inserite {n}.", unkWords:"Parola(e) non riconosciuta(e): {w}",
+      exportConfirm:"{n} risultati; esportare con indirizzi/chiavi derivati può essere lento. Continuare?",
+      rand12:"12 parole generate casualmente (un mnemonic valido completo).", randN:"Le prime {n} parole sono state riempite casualmente; clicca \"Autocompleta\" per vedere tutti i completamenti validi.",
+      parseErr:"Parola(e) non riconosciuta(e): {w}", hugeNum:"numero astronomico (ben oltre 10^16)",
+      durForever:"estremamente lungo (anni o più)", durForever2:"il tempo stimato è estremamente lungo",
+      durMs:"{n} ms", durSec:"{n} s", durMin:"{m} min {s} s", durHour:"{h} h", durDay:"{d} g", durYear:"{y} a",
+      recoverEmpty:"Nessun risultato (le parole note possono essere in conflitto; nessun mnemonic valido).", truncNote:" (troncato ai primi {c})",
+      warnTitle:"⚠ Mancano {m} parole, circa <b>{n}</b> possibilità valide. Tempo stimato: <b>{t}</b>.",
+      warnTip:"Troppe possibilità; questo strumento mostra solo le prime {c}. Usa uno strumento di recupero offline dedicato (es. btcrecover) per maggiori prestazioni e parallelismo.",
+      cap1w:"Genera prime 10.000", cap10w:"Genera prime 100.000", cap100:"Genera prime 100",
+      needMissing:"Lascia almeno una posizione mancante (vuota o ?).",
+      addrLabel:"Indirizzo", privLabel:"Chiave privata", genStatusStart:"Generazione… 0",
+      exporting:"Esportazione…", exportingProg:"Esportazione… {c} / {t}", mneQR:"Mnemonic", lblLen:"Numero di parole", genStatusCount:"Generazione… {c}"
+    },
+    ar: {
+      appTitle:"إكمال العبارة التذكارية", appSub:"يعمل دون اتصال · أدخل أول 10/11 أو 22/23 كلمة، وعدّ كل العبارات التذكارية الصحيحة حسب المجموع الاختباري · واشتق أول عنوان ومفتاح خاص",
+      tabPrefix:"إكمال البادئة", tabRecover:"استرجاع المفقود", tagIn:"إدخال", tagOut:"إخراج", knownWords:"عبارة معروفة",
+      lblCoin:"العملة", lblWordLang:"لغة العبارة", lblQuick:"تعبئة سريعة",
+      qfRand:"عشوائي", qf10:"أول 10", qf11:"أول 11", qf22:"أول 22", qf23:"أول 23",
+      mnemonicLabel:"أدخل الكلمات المعروفة (مفصولة بمسافات؛ الإنجليزية تكمل تلقائياً حسب الحروف الأولى، الصينية اختر الأحرف):",
+      mnemonicPh:"مثال: abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon abandon",
+      btnComplete:"إكمال تلقائي", btnClear:"مسح",
+      warnSecurity:"لاسترجاع <b>عبارتك الخاصة</b> فقط. يعمل دون اتصال تماماً دون إرسال أي بيانات. المفاتيح الخاصة حساسة للغاية، فلا تشاركها. يعرض BTC مسارات Legacy / Nested SegWit / Native SegWit / Taproot.",
+      outResult:"النتائج", btnExportKeys:"تصدير TXT (مع العنوان/المفتاح)", btnExportMnemonic:"العبارة فقط",
+      emptyPrefix:"لا توجد نتائج بعد. أدخل الكلمات المعروفة أعلاه وانقر «إكمال تلقائي».",
+      recoverTitle:"استرجاع الكلمات المفقودة", len12:"12 كلمة", len24:"24 كلمة",
+      recoverHint:"املأ الكلمات المعروفة في مواقعها، واترك <b>فارغاً</b> أو استخدم <code>?</code> للمفقود؛ يمكن أن تفقد عدة كلمات. يعدّ كل العبارات الصحيحة حسب المجموع الاختباري.",
+      btnRecover:"توليد عبارات صحيحة", outRecover:"نتائج الاسترجاع",
+      emptyRecover:"لا توجد نتائج بعد. املأ الكلمات المعروفة أعلاه وانقر «توليد عبارات صحيحة».",
+      foot:"معيار BIP39 · عدّ المجموع الاختباري · اشتقاق BIP32/BIP44 · تطبيق دون اتصال بملف واحد",
+      modalTitle:"تفاصيل العبارة والاشتقاق",
+      sugLabelEn:"المرشحون (إكمال تلقائي حسب الحروف الأولى، انقر للإدراج):", zhCandLabel:"المرشحون الصينيون (اكتب للتصفية، انقر للإدراج):",
+      zhMore:"…مزيد {n}، واصل الكتابة للتصفية", zhFilterPh:"تصفية الأحرف…",
+      genStatus:"جارٍ التوليد… {c} / {t}", done:"تم",
+      resultCount:"{n} عبارة صحيحة ({t} كلمة)",
+      outEmpty:"لا توجد نتائج.", cardHint:"انقر لعرض العنوان/المفتاح ورمز QR ▸",
+      capNote:"عرض أول {cap} من {total}. انقر «تصدير» للحصول على كل النتائج (مع العنوان/المفتاح).",
+      mneHead:"العبارة (Mnemonic)", deriveFail:"فشل الاشتقاق: ",
+      batchBtn100:"توليد أول 100 عنوان لهذا المسار", batchBtnRange:"توليد العناوين {s}-{e}",
+      copy:"نسخ", copied:"تم النسخ",
+      needWords:"أدخل 10 / 11 / 22 / 23 كلمة معروفة؛ أدخلت {n}.", unkWords:"كلمة غير معروفة: {w}",
+      exportConfirm:"{n} نتيجة؛ قد يكون التصدير مع العناوين/المفاتيح المشتقة بطيئاً. متابعة؟",
+      rand12:"تم توليد 12 كلمة عشوائياً (عبارة صحيحة كاملة).", randN:"تم تعبئة أول {n} كلمة عشوائياً؛ انقر «إكمال تلقائي» لرؤية كل الإكمالات الصحيحة.",
+      parseErr:"كلمة غير معروفة: {w}", hugeNum:"رقم فلكي (أكبر بكثير من 10^16)",
+      durForever:"طويل جداً (سنوات أو أكثر)", durForever2:"الوقت المقدر طويل جداً",
+      durMs:"{n} ميللي ثانية", durSec:"{n} ثانية", durMin:"{m} دقيقة {s} ثانية", durHour:"{h} ساعة", durDay:"{d} يوم", durYear:"{y} سنة",
+      recoverEmpty:"لا توجد نتائج (قد تتعارض الكلمات المعروفة؛ لا عبارة صحيحة).", truncNote:" (مقتطع إلى أول {c})",
+      warnTitle:"⚠ مفقود {m} كلمات، حوالي <b>{n}</b> احتمال صحيح. الوقت المقدر: <b>{t}</b>.",
+      warnTip:"احتمالات كثيرة جداً؛ يعرض هذا الأداة أول {c} فقط. استخدم أداة استرجاع دون اتصال متخصصة (مثل btcrecover) لأداء أعلى وتوازي.",
+      cap1w:"توليد أول 10,000", cap10w:"توليد أول 100,000", cap100:"توليد أول 100",
+      needMissing:"اترك موضعاً واحداً على الأقل مفقوداً (فارغاً أو ؟).",
+      addrLabel:"العنوان Address", privLabel:"المفتاح الخاص Private Key", genStatusStart:"جارٍ التوليد… 0",
+      exporting:"جارٍ التصدير…", exportingProg:"جارٍ التصدير… {c} / {t}", mneQR:"العبارة", lblLen:"عدد الكلمات", genStatusCount:"جارٍ التوليد… {c}"
+    }
+  };
+  window.t = function(key, vars){
+    var d = window.__I18N || {};
+    var s = (d[window.__uiLang] && d[window.__uiLang][key] != null) ? d[window.__uiLang][key]
+          : (d.en && d.en[key] != null) ? d.en[key]
+          : (d.zh && d.zh[key] != null) ? d.zh[key] : key;
+    if(vars){ for(var k in vars){ if(Object.prototype.hasOwnProperty.call(vars,k)) s = s.split('{'+k+'}').join(vars[k]); } }
+    return s;
+  };
+  window.applyUILang = function(lang){
+    if(!window.__I18N[lang]) lang = 'zh';
+    window.__uiLang = lang;
+    try{ localStorage.setItem('uiLang', lang); }catch(e){}
+    var html = document.documentElement;
+    html.lang = lang;
+    html.dir = (lang === 'ar') ? 'rtl' : 'ltr';
+    var els = document.querySelectorAll('[data-i18n]');
+    for(var i=0;i<els.length;i++){ els[i].textContent = window.t(els[i].getAttribute('data-i18n')); }
+    var ph = document.querySelectorAll('[data-i18n-ph]');
+    for(var j=0;j<ph.length;j++){ ph[j].setAttribute('placeholder', window.t(ph[j].getAttribute('data-i18n-ph'))); }
+    var ht = document.querySelectorAll('[data-i18n-html]');
+    for(var m=0;m<ht.length;m++){ ht[m].innerHTML = window.t(ht[m].getAttribute('data-i18n-html')); }
+    var menuBtns = document.querySelectorAll('#uiLangMenu button');
+    for(var b=0;b<menuBtns.length;b++){ menuBtns[b].classList.toggle('active', menuBtns[b].getAttribute('data-ul')===lang); }
+    var tog = document.getElementById('uiLangToggle');
+    if(tog) tog.textContent = (lang === 'zh') ? '中 / EN' : 'EN / 中';
+  };
+  (function bindLangUI(){
+    var box = document.getElementById('uiLangBox');
+    if(!box) return;
+    var menu = document.getElementById('uiLangMenu');
+    document.getElementById('uiLangToggle').addEventListener('click', function(){
+      window.applyUILang(window.__uiLang === 'zh' ? 'en' : 'zh');
+    });
+    document.getElementById('uiLangCaret').addEventListener('click', function(e){ e.stopPropagation(); menu.classList.toggle('hidden'); });
+    menu.addEventListener('click', function(e){
+      var btn = e.target.closest('button'); if(!btn) return;
+      window.applyUILang(btn.getAttribute('data-ul'));
+      menu.classList.add('hidden');
+    });
+    document.addEventListener('click', function(e){ if(!box.contains(e.target)) menu.classList.add('hidden'); });
+  })();
+  var saved = null;
+  try{ saved = localStorage.getItem('uiLang'); }catch(e){}
+  window.applyUILang(saved || 'zh');
+})();
+</script>
 <script>
 (function(){
   'use strict';
@@ -244,7 +826,7 @@
         const matches = WORDLIST_EN.filter(w=>w.startsWith(tok)).slice(0,60);
         if(matches.length){
           const label=document.createElement('div'); label.className='sug-label';
-          label.textContent='候选词（首字母联想，点击填入）：'; suggestionsEl.appendChild(label);
+          label.textContent=t('sugLabelEn'); suggestionsEl.appendChild(label);
           const wrap=document.createElement('div'); wrap.className='sug-wrap';
           matches.forEach(w=>{
             const c=document.createElement('button'); c.className='sug-chip'; c.textContent=w;
@@ -269,18 +851,19 @@
     });
     if(list.length>shown.length){
       const more=document.createElement('div'); more.className='sug-label';
-      more.textContent='…还有 '+(list.length-shown.length)+' 个，继续输入筛选'; wrap.appendChild(more);
+      more.textContent=t('zhMore',{n:(list.length-shown.length)}); wrap.appendChild(more);
     }
   }
   let zhFilterVal='';
   function setLang(l){
     lang = l;
     langSeg.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b.dataset.lang===l));
+    const rl=document.getElementById('recoverLang'); if(rl) rl.querySelectorAll('button').forEach(b=>b.classList.toggle('active', b.dataset.lang===l));
     suggestionsEl.innerHTML='';
     if(l==='ZH'){
       const label=document.createElement('div'); label.className='sug-label';
-      label.textContent='汉字候选（输入可筛选，点击插入）：'; suggestionsEl.appendChild(label);
-      const filt=document.createElement('input'); filt.className='zh-filter'; filt.placeholder='筛选汉字…'; filt.value=zhFilterVal;
+      label.textContent=t('zhCandLabel'); suggestionsEl.appendChild(label);
+      const filt=document.createElement('input'); filt.className='zh-filter'; filt.placeholder=t('zhFilterPh'); filt.value=zhFilterVal;
       filt.addEventListener('input',()=>{ zhFilterVal=filt.value; renderZHList(); });
       suggestionsEl.appendChild(filt);
       const wrap=document.createElement('div'); wrap.className='sug-wrap zh-wrap'; wrap.id='zhWrap';
@@ -298,7 +881,7 @@
     allResults = [];
     const gen = MnemCore.completeMnemonicGen(knownIndices, list);
     const totalCount = 1 << ((total===12?128:256) - n*11);
-    setStatus('生成中… 0 / '+totalCount, false);
+    setStatus(t('genStatus',{c:'0', t:totalCount}), false);
     completeBtn.disabled = true;
     let count = 0;
     function step(){
@@ -309,7 +892,7 @@
         allResults.push(r.value);
         count++;
       }
-      setStatus('生成中… '+count.toLocaleString()+' / '+totalCount.toLocaleString(), false);
+      setStatus(t('genStatus',{c:count.toLocaleString(), t:totalCount.toLocaleString()}), false);
       setTimeout(step, 0);
     }
     step();
@@ -317,8 +900,8 @@
 
   function finishComplete(total, count){
     completeBtn.disabled = false;
-    setStatus('完成', false);
-    resultCountEl.textContent = '共 '+count.toLocaleString()+' 条合法助记词（'+total+' 词）';
+    setStatus(t('done'), false);
+    resultCountEl.textContent = t('resultCount',{n:count.toLocaleString(), t:total});
     exportBtn.disabled = count===0;
     exportKeysBtn.disabled = count===0;
     renderOutput();
@@ -327,7 +910,7 @@
   function renderOutput(){
     outputEl.innerHTML='';
     if(!allResults.length){
-      const e=document.createElement('div'); e.className='empty'; e.textContent='未生成结果。';
+      const e=document.createElement('div'); e.className='empty'; e.textContent=t('outEmpty');
       outputEl.appendChild(e); return;
     }
     const cap = Math.min(allResults.length, DISPLAY_CAP);
@@ -335,14 +918,14 @@
       const card=document.createElement('div'); card.className='mnemonic-card';
       const txt=document.createElement('div'); txt.className='mnemonic-text';
       txt.textContent = (i+1)+'. '+allResults[i];
-      const hint=document.createElement('div'); hint.className='card-hint'; hint.textContent='点击查看地址/私钥与二维码 ▸';
+      const hint=document.createElement('div'); hint.className='card-hint'; hint.textContent=t('cardHint');
       card.appendChild(txt); card.appendChild(hint);
       card.addEventListener('click',()=>openDetail(allResults[i]));
       outputEl.appendChild(card);
     }
     if(allResults.length>DISPLAY_CAP){
       const note=document.createElement('div'); note.className='cap-note';
-      note.textContent='仅显示前 '+DISPLAY_CAP.toLocaleString()+' 条（共 '+allResults.length.toLocaleString()+' 条）。点击「导出」可获取全部结果（含地址/私钥）。';
+      note.textContent=t('capNote',{cap:DISPLAY_CAP.toLocaleString(), total:allResults.length.toLocaleString()});
       outputEl.appendChild(note);
     }
   }
@@ -377,7 +960,7 @@
     const left=document.createElement('div'); left.className='d-row-left';
     const lab=document.createElement('div'); lab.className='d-label'; lab.textContent=label;
     const txt=document.createElement('div'); txt.className='d-text'; txt.textContent=text;
-    const cp=document.createElement('button'); cp.className='d-copy'; cp.textContent='复制';
+    const cp=document.createElement('button'); cp.className='d-copy'; cp.textContent=t('copy');
     cp.addEventListener('click',()=>copyText(text));
     left.appendChild(lab); left.appendChild(txt); left.appendChild(cp);
     const right=document.createElement('div'); right.className='d-row-right'; right.innerHTML=makeQR(qrText);
@@ -390,9 +973,9 @@
     detailBody.innerHTML='';
     // mnemonic section
     const mne=document.createElement('div'); mne.className='d-section mne';
-    const mh=document.createElement('div'); mh.className='d-acc-head'; mh.textContent='助记词 (Mnemonic)';
+    const mh=document.createElement('div'); mh.className='d-acc-head'; mh.textContent=t('mneHead');
     mne.appendChild(mh);
-    mne.appendChild(qrRow('助记词', mnemonic, mnemonic));
+    mne.appendChild(qrRow(t('mneQR'), mnemonic, mnemonic));
     detailBody.appendChild(mne);
     // accounts
     let accounts;
@@ -403,20 +986,20 @@
       const head=document.createElement('div'); head.className='d-acc-head';
       head.innerHTML='<span>'+acc.label+'</span><span class="d-path">'+acc.path+'</span>';
       sec.appendChild(head);
-      sec.appendChild(qrRow('地址 Address', acc.address, acc.address));
+      sec.appendChild(qrRow(t('addrLabel'), acc.address, acc.address));
       const keyText = acc.privHex + (acc.wif? '\nWIF: '+acc.wif : '');
-      sec.appendChild(qrRow('私钥 Private Key', keyText, acc.privHex));
+      sec.appendChild(qrRow(t('privLabel'), keyText, acc.privHex));
       // batch generator
       const st={start:0};
       const batchBtn=document.createElement('button'); batchBtn.className='btn ghost d-batch';
-      batchBtn.textContent='生成该路径前 100 个地址';
+      batchBtn.textContent=t('batchBtn100');
       const batchBox=document.createElement('div'); batchBox.className='d-batch-box';
       batchBox.addEventListener('click', e=>{
         const btn=e.target.closest('.br-copy'); if(!btn) return;
         const row=btn.closest('.d-batch-row');
         const val = btn.dataset.c==='priv' ? row.querySelector('.bk').textContent : row.querySelector('.ba').textContent;
         copyText(val);
-        const old=btn.textContent; btn.textContent='已复制'; setTimeout(()=>btn.textContent=old, 800);
+        const old=btn.textContent; btn.textContent=t('copied'); setTimeout(()=>btn.textContent=old, 800);
       });
       batchBtn.addEventListener('click',()=>{
         const res=Derive.derivePathAddresses(mnemonic, coin, acc.path, st.start, 100);
@@ -424,15 +1007,15 @@
         for(const r of res){
           html+='<div class="d-batch-row"><span class="idx">#'+(r.index+1)+'</span>'+
             '<div class="br-info">'+
-              '<div class="br-addr"><span class="ba" title="'+esc(r.address)+'">'+esc(r.address)+'</span><button class="br-copy" data-c="addr">复制</button></div>'+
-              '<div class="br-key"><span class="bk" title="'+esc(r.privHex)+'">'+esc(r.privHex)+'</span><button class="br-copy" data-c="priv">复制</button></div>'+
+              '<div class="br-addr"><span class="ba" title="'+esc(r.address)+'">'+esc(r.address)+'</span><button class="br-copy" data-c="addr">'+t('copy')+'</button></div>'+
+              '<div class="br-key"><span class="bk" title="'+esc(r.privHex)+'">'+esc(r.privHex)+'</span><button class="br-copy" data-c="priv">'+t('copy')+'</button></div>'+
             '</div>'+
             '<div class="br-qr">'+makeQRsmall(r.address)+makeQRsmall(r.privHex)+'</div>'+
           '</div>';
         }
         batchBox.insertAdjacentHTML('beforeend', html);
         st.start+=100;
-        batchBtn.textContent='生成 '+(st.start+1)+'-'+(st.start+100)+' 个地址';
+        batchBtn.textContent=t('batchBtnRange',{s:st.start+1, e:st.start+100});
       });
       sec.appendChild(batchBtn);
       sec.appendChild(batchBox);
@@ -453,7 +1036,7 @@
     const tokens = getTokens();
     const n = tokens.length;
     const total = MnemCore.totalFor(n);
-    if(!total){ setStatus('请输入 10 / 11 / 22 / 23 个已知词，当前为 '+n+' 个。', true); return; }
+    if(!total){ setStatus(t('needWords',{n:n}), true); return; }
     let map = lang==='EN'?EN_MAP:ZH_MAP;
     let list = lang==='EN'?WORDLIST_EN:WORDLIST_ZH;
     let idx = tokens.map(t=> map[t]!==undefined ? map[t] : -1);
@@ -463,13 +1046,13 @@
       const otherList = lang==='EN'?WORDLIST_ZH:WORDLIST_EN;
       const idx2 = tokens.map(t=> otherMap[t]!==undefined ? otherMap[t] : -1);
       if(idx2.every(x=>x>=0)){ setLang(lang==='EN'?'ZH':'EN'); doComplete(idx2, otherList, total, n); return; }
-      setStatus('无法识别的词：'+missing.join('、'), true); return;
+      setStatus(t('unkWords',{w:missing.join('、')}), true); return;
     }
     doComplete(idx, list, total, n);
   });
 
   clearBtn.addEventListener('click', ()=>{
-    input.value=''; allResults=[]; outputEl.innerHTML='<div class="empty">尚未生成结果。在上方输入已知助记词后点击「自动补全」。</div>';
+    input.value=''; allResults=[]; outputEl.innerHTML='<div class="empty">'+t('emptyPrefix')+'</div>';
     resultCountEl.textContent=''; exportBtn.disabled=true; exportKeysBtn.disabled=true; setStatus(''); updateSuggestions();
   });
   exportBtn.addEventListener('click', ()=>{
@@ -478,8 +1061,8 @@
   });
   exportKeysBtn.addEventListener('click', ()=>{
     if(!allResults.length) return;
-    if(allResults.length > 20000 && !confirm('共 '+allResults.length+' 条，导出含地址/私钥需逐条派生，可能较慢，是否继续？')) return;
-    setStatus('导出中…', false);
+    if(allResults.length > 20000 && !confirm(t('exportConfirm',{n:allResults.length}))) return;
+    setStatus(t('exporting'), false);
     const lines=[];
     let i=0;
     function step(){
@@ -497,7 +1080,7 @@
         lines.push('');
         i++;
       }
-      if(i<allResults.length){ setStatus('导出中… '+i.toLocaleString()+' / '+allResults.length.toLocaleString(), false); setTimeout(step,0); }
+      if(i<allResults.length){ setStatus(t('exportingProg',{c:i.toLocaleString(), t:allResults.length.toLocaleString()}), false); setTimeout(step,0); }
       else {
         download('mnemonic_'+coin+'_'+lang+'_'+allResults.length+'_with_keys.txt', lines.join('\n'));
         setStatus('');
@@ -537,17 +1120,289 @@
     const list = lang==='EN'?WORDLIST_EN:WORDLIST_ZH;
     if(q==='rand'){
       input.value = randomFullMnemonic(12);
-      setStatus('已随机生成 12 个词（完整有效助记词）。', false);
+      setStatus(t('rand12'), false);
     } else {
       const n = parseInt(q,10);
       const words=[];
       for(let i=0;i<n;i++) words.push(list[randInt(2048)]);
       input.value = words.join(' ');
-      setStatus('已随机填充前 '+n+' 个词，点击「自动补全」查看全部合法补全。', false);
+      setStatus(t('randN',{n:n}), false);
     }
   });
   qrClose.addEventListener('click', ()=>modalEl.classList.add('hidden'));
   modalEl.addEventListener('click', e=>{ if(e.target===modalEl) modalEl.classList.add('hidden'); });
+
+  // ---------- 缺失恢复（任意缺词） ----------
+  let recoverTotal = 12;
+  let recoverAllResults = [];
+  let recoverPerItemMs = 0.04;
+  const recoverGrid = document.getElementById('recoverGrid');
+  const recoverWarn = document.getElementById('recoverWarn');
+  const recoverStatusEl = document.getElementById('recoverStatus');
+  const recoverResultCountEl = document.getElementById('recoverResultCount');
+  const recoverOutputEl = document.getElementById('recoverOutput');
+  const recoverExportBtn = document.getElementById('recoverExportBtn');
+  const recoverExportKeysBtn = document.getElementById('recoverExportKeysBtn');
+
+  function setRecoverStatus(msg, isErr){
+    recoverStatusEl.textContent = msg || '';
+    recoverStatusEl.classList.toggle('err', !!isErr);
+  }
+  function buildRecoverGrid(){
+    recoverGrid.innerHTML = '';
+    recoverGrid.style.setProperty('--n', recoverTotal===12 ? 6 : 8);
+    for(let i=0;i<recoverTotal;i++){
+      const wrap=document.createElement('div'); wrap.className='wcell-wrap';
+      const idx=document.createElement('span'); idx.className='widx'; idx.textContent=(i+1);
+      const inp=document.createElement('input'); inp.className='wcell'; inp.dataset.pos=i; inp.placeholder='?';
+      inp.maxLength = lang==='EN' ? 14 : 1;
+      wrap.appendChild(idx); wrap.appendChild(inp);
+      recoverGrid.appendChild(wrap);
+    }
+  }
+  function parseRecover(){
+    const cells=[...recoverGrid.querySelectorAll('.wcell')];
+    const map = lang==='EN'?EN_MAP:ZH_MAP;
+    const known = cells.map(c=>{
+      const v=(c.value||'').trim();
+      if(!v || /^[?*_\-]+$/.test(v)) return null;
+      const i = map[v];
+      if(i===undefined) return {error:v};
+      return i;
+    });
+    const bad = known.find(x=>x && x.error);
+    if(bad) return {error:t('parseErr',{w:bad.error})};
+    const m = known.filter(x=>x===null).length;
+    return {known, m, total:recoverTotal};
+  }
+  // Fast reconstruction mirroring MnemCore.completeMnemonicGen's BIP39 convention:
+  //   V = (entropy << csBits) | checksum, csBits = 4 (12w) / 8 (24w)
+  //   word i = bits [11*(N-1-i) .. 11*(N-1-i)+10] of V  (word 0 = highest bits)
+  //   checksum = first csBits bits of SHA256(entropy), MSB-first, in V's LOWEST csBits bits
+  function freeEntropyBits(known, total){
+    const N=total, EB=total===12?128:256, csBits=total===12?4:8;
+    const fixed=new Array(EB).fill(false);
+    for(let i=0;i<N;i++){
+      if(known[i]!=null){
+        for(let j=0;j<11;j++){ const epos=11*(N-1-i)+j-csBits; if(epos>=0) fixed[epos]=true; }
+      }
+    }
+    const out=[]; for(let q=0;q<EB;q++) if(!fixed[q]) out.push(q);
+    return out;
+  }
+  function countValid(known, total){
+    const e=freeEntropyBits(known,total).length;
+    return e<=53 ? Number(1n<<BigInt(e)) : Infinity;
+  }
+  function* genRecover(known, list, total, cap){
+    const N=total, EB=total===12?128:256, csBits=total===12?4:8;
+    const nbytes = EB/8;
+    const sha = MnemCore.sha256;
+    const bidx = k => (nbytes-1) - (k>>3);   // standard big-endian entropy byte index (E MSB -> byte 0)
+    const fixed = new Array(EB).fill(false);
+    const template = new Uint8Array(nbytes);   // entropy bits fixed by known words
+    for(let i=0;i<N;i++){
+      if(known[i]!=null){
+        const idx=known[i];
+        for(let j=0;j<11;j++){
+          const epos=11*(N-1-i)+j-csBits;
+          if(epos>=0){ fixed[epos]=true; if((idx>>j)&1) template[bidx(epos)] |= (1<<(epos&7)); }
+        }
+      }
+    }
+    const freeEB=[]; for(let q=0;q<EB;q++) if(!fixed[q]) freeEB.push(q);
+    const e = freeEB.length;
+    const maxCounter = (e<=53) ? (1n<<BigInt(e)) : null;
+    const limit = (maxCounter!==null) ? Math.min(cap, Number(maxCounter)) : cap;
+    const entBytes = new Uint8Array(nbytes);
+    for(let counter=0; counter<limit; counter++){
+      entBytes.set(template);
+      for(let k=0;k<e;k++){ const q=freeEB[k]; if((counter>>k)&1) entBytes[bidx(q)] |= (1<<(q&7)); }
+      const hash = sha(entBytes);
+      let csVal = 0;
+      for(let bit=0;bit<csBits;bit++){ const vb=(hash[bit>>3]>>(7-(bit&7)))&1; csVal=(csVal<<1)|vb; }
+      const words=[]; let ok=true;
+      for(let i=0;i<N;i++){
+        let idx=0;
+        for(let j=0;j<11;j++){
+          const p = 11*(N-1-i)+j;
+          const bit = p<csBits
+            ? (csVal>>p)&1
+            : (entBytes[bidx(p-csBits)]>>((p-csBits)&7))&1;
+          if(bit) idx |= (1<<j);
+        }
+        words.push(list[idx]);
+        if(known[i]!=null && idx!==known[i]) ok=false;   // validates checksum-overlapping known words
+      }
+      if(!ok) continue;
+      yield words.join(' ');
+    }
+  }
+  function fmtCount(n){ return n===Infinity ? t('hugeNum') : n.toLocaleString(); }
+  function fmtDuration(sec){
+    if(!isFinite(sec)) return t('durForever');
+    if(sec<1) return t('durMs',{n:Math.max(1,Math.round(sec*1000))});
+    if(sec<60) return t('durSec',{n:sec.toFixed(1)});
+    if(sec<3600) return t('durMin',{m:Math.floor(sec/60), s:Math.round(sec%60)});
+    if(sec<86400) return t('durHour',{h:(sec/3600).toFixed(1)});
+    if(sec<31536000) return t('durDay',{d:(sec/86400).toFixed(1)});
+    return t('durYear',{y:(sec/31536000).toFixed(1)});
+  }
+  function runRecover(known, list, total, cap, isPartial){
+    recoverWarn.classList.add('hidden');
+    recoverAllResults=[];
+    const gen=genRecover(known, list, total, cap);
+    setRecoverStatus(t('genStatusStart'), false);
+    let count=0;
+    function step(){
+      const start=performance.now();
+      while(performance.now()-start<60){
+        const r=gen.next();
+        if(r.done){ finishRecover(total, count, cap, isPartial); return; }
+        recoverAllResults.push(r.value);
+        count++;
+      }
+      setRecoverStatus(t('genStatusCount',{c:count.toLocaleString()}), false);
+      setTimeout(step,0);
+    }
+    step();
+  }
+  function finishRecover(total, count, cap, isPartial){
+    setRecoverStatus(t('done'), false);
+    let txt=t('resultCount',{n:count.toLocaleString(), t:total});
+    if(isPartial && count>=cap) txt += t('truncNote',{c:cap.toLocaleString()});
+    recoverResultCountEl.textContent = txt;
+    recoverExportBtn.disabled = count===0;
+    recoverExportKeysBtn.disabled = count===0;
+    renderRecoverOutput();
+  }
+  function renderRecoverOutput(){
+    recoverOutputEl.innerHTML='';
+    if(!recoverAllResults.length){
+      recoverOutputEl.innerHTML='<div class="empty">'+t('recoverEmpty')+'</div>';
+      return;
+    }
+    const cap=Math.min(recoverAllResults.length, DISPLAY_CAP);
+    for(let i=0;i<cap;i++){
+      const card=document.createElement('div'); card.className='mnemonic-card';
+      const txt=document.createElement('div'); txt.className='mnemonic-text';
+      txt.textContent=(i+1)+'. '+recoverAllResults[i];
+      const hint=document.createElement('div'); hint.className='card-hint'; hint.textContent=t('cardHint');
+      card.appendChild(txt); card.appendChild(hint);
+      card.addEventListener('click', ()=>openDetail(recoverAllResults[i]));
+      recoverOutputEl.appendChild(card);
+    }
+    if(recoverAllResults.length>DISPLAY_CAP){
+      const note=document.createElement('div'); note.className='cap-note';
+      note.textContent=t('capNote',{cap:DISPLAY_CAP.toLocaleString(), total:recoverAllResults.length.toLocaleString()});
+      recoverOutputEl.appendChild(note);
+    }
+  }
+  function showRecoverWarn(m, totalValid, estSec, caps, suggestOther){
+    let html='<div class="rw-title">'+t('warnTitle',{m:m, n:fmtCount(totalValid), t:isFinite(estSec)?fmtDuration(estSec):t('durForever2')})+'</div>';
+    if(suggestOther) html+='<div class="rw-tip">'+t('warnTip',{c:caps[0].cap.toLocaleString()})+'</div>';
+    html+='<div class="cap-row">';
+    for(const c of caps) html+='<button class="btn primary rw-cap" data-cap="'+c.cap+'">'+c.label+'</button>';
+    html+='</div>';
+    recoverWarn.innerHTML=html;
+    recoverWarn.classList.remove('hidden');
+    recoverWarn.querySelectorAll('.rw-cap').forEach(b=>{
+      b.addEventListener('click', ()=>{
+        const cap=parseInt(b.dataset.cap,10);
+        const p=parseRecover(); if(p.error){ setRecoverStatus(p.error,true); return; }
+        runRecover(p.known, lang==='EN'?WORDLIST_EN:WORDLIST_ZH, p.total, cap, true);
+      });
+    });
+  }
+  function doRecover(){
+    const p=parseRecover();
+    if(p.error){ setRecoverStatus(p.error,true); return; }
+    const m=p.m, total=p.total;
+    if(m===0){ setRecoverStatus(t('needMissing'), true); return; }
+    const list = lang==='EN'?WORDLIST_EN:WORDLIST_ZH;
+    const totalValid = countValid(p.known, total);
+    const estSec = (totalValid===Infinity)? Infinity : totalValid*recoverPerItemMs/1000;
+    if(m<=2){
+      runRecover(p.known, list, total, totalValid===Infinity?1000000:totalValid, false);
+    } else if(m<=5){
+      showRecoverWarn(m, totalValid, estSec, [
+        {label:t('cap1w'), cap:10000},
+        {label:t('cap10w'), cap:100000}
+      ], false);
+    } else {
+      showRecoverWarn(m, totalValid, estSec, [
+        {label:t('cap100'), cap:100}
+      ], true);
+    }
+  }
+  function benchmarkRecover(){
+    try{
+      const known=new Array(12).fill(null);
+      for(let i=0;i<10;i++) known[i]=0;
+      const gen=genRecover(known, WORDLIST_EN, 12, 3000);
+      const t0=performance.now();
+      let c=0; for(const _ of gen) c++;
+      const dt=performance.now()-t0;
+      if(c>0) recoverPerItemMs = dt/c;
+    }catch(e){ /* keep default */ }
+  }
+  document.getElementById('recoverBtn').addEventListener('click', doRecover);
+  document.getElementById('recoverClear').addEventListener('click', ()=>{
+    recoverGrid.querySelectorAll('.wcell').forEach(c=>c.value='');
+    recoverWarn.classList.add('hidden');
+    recoverAllResults=[];
+    recoverOutputEl.innerHTML='<div class="empty">'+t('emptyRecover')+'</div>';
+    recoverResultCountEl.textContent='';
+    recoverExportBtn.disabled=true; recoverExportKeysBtn.disabled=true;
+    setRecoverStatus('');
+  });
+  document.getElementById('recoverLen').addEventListener('click', e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    recoverTotal=parseInt(b.dataset.len,10);
+    document.getElementById('recoverLen').querySelectorAll('button').forEach(x=>x.classList.toggle('active', x===b));
+    buildRecoverGrid();
+  });
+  document.getElementById('recoverLang').addEventListener('click', e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    setLang(b.dataset.lang);
+    document.getElementById('recoverLang').querySelectorAll('button').forEach(x=>x.classList.toggle('active', x===b));
+  });
+  recoverExportBtn.addEventListener('click', ()=>{
+    if(!recoverAllResults.length) return;
+    download('recover_'+coin+'_'+lang+'_'+recoverAllResults.length+'.txt', recoverAllResults.join('\n'));
+  });
+  recoverExportKeysBtn.addEventListener('click', ()=>{
+    if(!recoverAllResults.length) return;
+    if(recoverAllResults.length>20000 && !confirm(t('exportConfirm',{n:recoverAllResults.length}))) return;
+    setRecoverStatus(t('exporting'), false);
+    const lines=[]; let i=0;
+    function step(){
+      const t0=performance.now();
+      while(performance.now()-t0<60 && i<recoverAllResults.length){
+        const m=recoverAllResults[i]; let accs=[];
+        try{ accs=Derive.deriveAccounts(m, coin); }catch(e){ accs=[]; }
+        lines.push('=== '+m+' ===');
+        for(const a of accs){ lines.push(a.label+' ['+a.path+']'); lines.push('  address : '+a.address); lines.push('  privkey : '+a.privHex+(a.wif?'  wif: '+a.wif:'')); }
+        lines.push('');
+        i++;
+      }
+      if(i<recoverAllResults.length){ setRecoverStatus(t('exportingProg',{c:i.toLocaleString(), t:recoverAllResults.length.toLocaleString()}), false); setTimeout(step,0); }
+      else { download('recover_'+coin+'_'+lang+'_'+recoverAllResults.length+'_with_keys.txt', lines.join('\n')); setRecoverStatus(''); }
+    }
+    step();
+  });
+  const tabsEl=document.getElementById('tabs');
+  tabsEl.addEventListener('click', e=>{
+    const b=e.target.closest('button'); if(!b) return;
+    const t=b.dataset.tab;
+    tabsEl.querySelectorAll('button').forEach(x=>x.classList.toggle('active', x===b));
+    document.getElementById('prefixInputCard').classList.toggle('hidden', t!=='prefix');
+    document.getElementById('prefixOutputCard').classList.toggle('hidden', t!=='prefix');
+    document.getElementById('recoverInputCard').classList.toggle('hidden', t!=='recover');
+    document.getElementById('recoverOutputCard').classList.toggle('hidden', t!=='recover');
+  });
+  buildRecoverGrid();
+  benchmarkRecover();
 
   updateSuggestions();
 })();
