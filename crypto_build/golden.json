@@ -1,0 +1,169 @@
+{
+  "m12": "about access acquire adapt advance age aisle alley alter analyst ankle fever",
+  "m24": "about access acquire adapt advance age aisle alley alter analyst ankle anxiety april armed arrow assault attack aunt awake baby ball barrel beauty heavy",
+  "accounts": {
+    "about access acquire adapt advance age aisle alley alter analyst ankle fever": {
+      "BTC": [
+        {
+          "label": "Legacy · P2PKH",
+          "path": "m/44'/0'/0'/0/0",
+          "kind": "legacy",
+          "coin": "BTC",
+          "address": "12Njva2xNTCfQz57HRaqkrQEB8aQKie9MT",
+          "privHex": "0x797fceb3104e4862608ee594615a7cfb9117f7ee926a9c37292f4a5379a7612c",
+          "wif": "L1HtYfyynC6y38KY4JYoDm36Q3rGGRL3GDduRDWQr4qzkcY8zNGu"
+        },
+        {
+          "label": "Nested SegWit · P2SH-P2WPKH",
+          "path": "m/49'/0'/0'/0/0",
+          "kind": "nested",
+          "coin": "BTC",
+          "address": "35peHgLxV4doQQy3znhx1n4Y8AT8P7MEAT",
+          "privHex": "0x0ecd6f33ea01e4e4a30a78cd76c18ee812cf57d06aa4296a7626d1f3c2d1c652",
+          "wif": "KwiV5g23mJb5TimBiLUXC34XHpbf5bCsrgLT2473tNWCex8Kw2qQ"
+        },
+        {
+          "label": "Native SegWit · P2WPKH",
+          "path": "m/84'/0'/0'/0/0",
+          "kind": "segwit",
+          "coin": "BTC",
+          "address": "bc1qln7c2zqxh4n25v78l9c927clvsju92sdu6j2j3",
+          "privHex": "0x643cba852fd875b22013300cf2193e7df11899acb877eb3b5b298d367df6c0a2",
+          "wif": "KzaZNXgFaiziNv6LVgvT6nuwpSw5btW6dPaSQfymxCXToHfqyvjn"
+        },
+        {
+          "label": "Taproot · P2TR",
+          "path": "m/86'/0'/0'/0/0",
+          "kind": "taproot",
+          "coin": "BTC",
+          "address": "bc1p7t7hv5r47sfa3f70xst8nnekt76r72ezhtuhawcqfxk6pq2ehdtqu5s8ey",
+          "privHex": "0x81739e7cf8cba4915f5ffbea7d08a66bbe6540dbbf294bece888f87ae04b9231",
+          "wif": "L1ZM8kSbzdSWagJ4GWwnjbezK27g8SdgjAopejwTdkHLDVA6FGWu"
+        }
+      ],
+      "ETH": [
+        {
+          "label": "Ethereum · m/44'/60'/0'/0/0",
+          "path": "m/44'/60'/0'/0/0",
+          "kind": "eth",
+          "coin": "ETH",
+          "address": "0xCDcfD206d8C667f2756254600e7D12Aa4ab6f005",
+          "privHex": "0xe0ac29ba413dfacbb0e4dcabb387257308efddacb34e7f2c4296279e5cd5c04a",
+          "wif": null
+        }
+      ],
+      "SOL": [
+        {
+          "label": "Solana · m/44'/501'/0'/0/0",
+          "path": "m/44'/501'/0'/0/0",
+          "kind": "sol",
+          "coin": "SOL",
+          "address": "B5cetZMM3cZBMfrqSvW6wGNQUXcEe6wyXDfZu6L7RAAD",
+          "privHex": "0x3c213c18e3463e3b6b7f8e623b3a4cde8e21cce3b11ac196400cabb51c6ed5d0",
+          "wif": null
+        }
+      ],
+      "SUI": [
+        {
+          "label": "Sui · m/44'/784'/0'/0/0",
+          "path": "m/44'/784'/0'/0/0",
+          "kind": "sui",
+          "coin": "SUI",
+          "address": "0xf5dd2b55f5b85265489ea27f4dc6cab478193946c145d53019a33b3eabc28634",
+          "privHex": "0x7e6f132cbd24e89773a6b4b9f82a86015bf4d51fcc2d62f227d1602437128791",
+          "wif": null
+        }
+      ]
+    },
+    "about access acquire adapt advance age aisle alley alter analyst ankle anxiety april armed arrow assault attack aunt awake baby ball barrel beauty heavy": {
+      "BTC": [
+        {
+          "label": "Legacy · P2PKH",
+          "path": "m/44'/0'/0'/0/0",
+          "kind": "legacy",
+          "coin": "BTC",
+          "address": "1ALbronr5p47MZJsTfVf9syh5RQKxYDdaq",
+          "privHex": "0x089aac89f1e8db2b04900631e92cd2e86780bdf7b7840357f800fa20a2abf613",
+          "wif": "KwWSG1TH2w8caLPzFU9MVQwVkiir4prLJP22vVjej6idnzHvxyne"
+        },
+        {
+          "label": "Nested SegWit · P2SH-P2WPKH",
+          "path": "m/49'/0'/0'/0/0",
+          "kind": "nested",
+          "coin": "BTC",
+          "address": "3EPT9yi7iLhmqxY2G9kSW9k9Mn8m4uxP5z",
+          "privHex": "0x8cd1b4df8371cfae7f1fbb96364cab44fce5deb337d26ef4b07865d39f37a8b3",
+          "wif": "L1wSm2Za5ci8yGLB7hB9fDWLeAPxfnR1arkDgHGuq6PtTguHMM5L"
+        },
+        {
+          "label": "Native SegWit · P2WPKH",
+          "path": "m/84'/0'/0'/0/0",
+          "kind": "segwit",
+          "coin": "BTC",
+          "address": "bc1q3mmwl9dgshm07hc9j5wss9yw4a963jl9z3n0m6",
+          "privHex": "0xa3645b21155ce663d80bdf11b2ea26e40120f4178f67e6428a3148af6b6e666f",
+          "wif": "L2hKisXDGBfzV8nqDPDxRkA4jeAmLAyh9Nrp8xbAzNcyAJ23Xubv"
+        },
+        {
+          "label": "Taproot · P2TR",
+          "path": "m/86'/0'/0'/0/0",
+          "kind": "taproot",
+          "coin": "BTC",
+          "address": "bc1pm59yv34zmc3nlf2ka5jh52f72tqnrd8n9r6n3xr24qhhy0v5vqeqth703s",
+          "privHex": "0x0b4dc877596a0cfc3ac1b06fc79574988f431ad4a1af15baebfdd9aee8920574",
+          "wif": "KwbgdTo6xhAaoL5pdABYTagJZV3EtAyQ33uhpj18G3KM2ptytecd"
+        }
+      ],
+      "ETH": [
+        {
+          "label": "Ethereum · m/44'/60'/0'/0/0",
+          "path": "m/44'/60'/0'/0/0",
+          "kind": "eth",
+          "coin": "ETH",
+          "address": "0x910da23aFD666b28618778688D0A44614B693E9f",
+          "privHex": "0x1cebe52a797232fc7b9433ff701dde9de981be4019f0bd184743343ab9628ba1",
+          "wif": null
+        }
+      ],
+      "SOL": [
+        {
+          "label": "Solana · m/44'/501'/0'/0/0",
+          "path": "m/44'/501'/0'/0/0",
+          "kind": "sol",
+          "coin": "SOL",
+          "address": "2NsSgpJzLijhiqRZAjaXbK8ugUTKApGRSQpv651jzHXd",
+          "privHex": "0x6ba591d105a5b1bdd488742d9b97f3687a05c750416b7524ddb90ad8441da151",
+          "wif": null
+        }
+      ],
+      "SUI": [
+        {
+          "label": "Sui · m/44'/784'/0'/0/0",
+          "path": "m/44'/784'/0'/0/0",
+          "kind": "sui",
+          "coin": "SUI",
+          "address": "0x76381da4c740f6b6e70010adb943dab485ac7481c1b7f6377cb30acdc1d35fc9",
+          "privHex": "0x04fb3f81a9c02fafd18fdd8acf0111c5229512681df2cddeb02228c35c1ce257",
+          "wif": null
+        }
+      ]
+    }
+  },
+  "pathSample": [
+    {
+      "index": 0,
+      "address": "bc1qln7c2zqxh4n25v78l9c927clvsju92sdu6j2j3",
+      "privHex": "0x643cba852fd875b22013300cf2193e7df11899acb877eb3b5b298d367df6c0a2"
+    },
+    {
+      "index": 1,
+      "address": "bc1qmzz5kr0zcyzjrg9snm3tatyk3fanljyauugqau",
+      "privHex": "0xb25b460c8267beef00978521c1a72fdc726f6eb4f11a2b17614204f4d1f43484"
+    },
+    {
+      "index": 2,
+      "address": "bc1qnd98q4huuycfv568y86rd6w7669q4lju5hxdh9",
+      "privHex": "0x07e7fcb90dd8e73baf75b4460b518f07fb241c15f48cbc9d0a9daa2dd9375e7c"
+    }
+  ]
+}
