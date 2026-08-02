@@ -26,3 +26,15 @@ __pycache__/
 *.pyc
 .venv/
 venv/
+
+# ---- build artifacts (regenerated; old locked bundle excluded) ----
+crypto_build/derive.bundle.js
+crypto_build/derive.bundle.js.tmp
+crypto_build/derive.bundle.old.js
+crypto_build/derivation.bundle.js.tmp
+
+# ---- scratch / debug test files ----
+crypto_build/_*.cjs
+crypto_build/_*.mjs
+crypto_build/pack.cjs
+crypto_build/mapping.cjs
