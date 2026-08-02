@@ -8,6 +8,9 @@
  * Word count mapping:
  *   10 or 11 known  -> 12-word mnemonic (128-bit entropy + 4-bit checksum)
  *   22 or 23 known  -> 24-word mnemonic (256-bit entropy + 8-bit checksum)
+ *
+ * Compatibility: implemented with Uint8Array bit operations and plain Number
+ * counters (NO BigInt), so it runs on old browsers (e.g. Chrome 59).
  */
 (function (global) {
   'use strict';
@@ -87,12 +90,31 @@
     return out;
   }
 
-  function bigIntToBytes(E, nbytes) {
-    const out = new Uint8Array(nbytes);
-    for (let i = 0; i < nbytes; i++) {
-      out[nbytes - 1 - i] = Number((E >> BigInt(8 * i)) & 0xffn);
+  // ---- big-endian bit helpers (no BigInt) -------------------------------
+  function setBitsBE(bytes, bitPos, value, bitLen) {
+    for (let k = 0; k < bitLen; k++) {
+      const bit = (value >> (bitLen - 1 - k)) & 1;
+      const idx = (bitPos + k) >> 3;
+      const off = 7 - ((bitPos + k) & 7);
+      if (bit) bytes[idx] |= (1 << off);
+      else bytes[idx] &= ~(1 << off);
     }
-    return out;
+  }
+  function clearBitsBE(bytes, bitPos, bitLen) {
+    for (let k = 0; k < bitLen; k++) {
+      const idx = (bitPos + k) >> 3;
+      const off = 7 - ((bitPos + k) & 7);
+      bytes[idx] &= ~(1 << off);
+    }
+  }
+  function readBitsBE(bytes, bitPos, bitLen) {
+    let v = 0;
+    for (let k = 0; k < bitLen; k++) {
+      const idx = (bitPos + k) >> 3;
+      const off = 7 - ((bitPos + k) & 7);
+      v = (v << 1) | ((bytes[idx] >> off) & 1);
+    }
+    return v;
   }
 
   function totalFor(n) {
@@ -112,40 +134,44 @@
     if (!total) throw new Error('known count must be 10/11/22/23');
 
     const entBits = total === 12 ? 128 : 256;
-    const csBits = entBits / 32;
-    const wordBits = 11n;
+    const csBits = total === 12 ? 4 : 8;
+    const nbytes = entBits / 8;
+    const remEnt = entBits - n * 11;          // free entropy bits still to enumerate
+    const ceil = 1 << remEnt;                 // counter bound (remEnt <= 18, fits a Number)
 
-    // knownHigh = first n*11 bits of the entropy (the known prefix is pure entropy)
-    let knownHigh = 0n;
-    for (let i = 0; i < n; i++) {
-      knownHigh = (knownHigh << wordBits) | BigInt(knownIndices[i]);
-    }
+    const eBytes = new Uint8Array(nbytes);
+    // known prefix occupies the TOP n*11 bits of the entropy
+    for (let i = 0; i < n; i++) setBitsBE(eBytes, 11 * i, knownIndices[i], 11);
 
-    const remEnt = entBits - n * 11;        // free entropy bits still to enumerate
-    const ceil = 1n << BigInt(remEnt);
+    // combined buffer = entropy bytes + 1 extra byte for the checksum bits
+    const vb = new Uint8Array(nbytes + 1);
 
-    for (let c = 0n; c < ceil; c++) {
-      const E = (knownHigh << BigInt(remEnt)) | c;          // full entropy
-      const eBytes = bigIntToBytes(E, entBits / 8);
-      const hash = sha256(eBytes);
+    for (let c = 0; c < ceil; c++) {
+      vb.set(eBytes);
+      // place the free counter into the bottom remEnt bits of the entropy
+      clearBitsBE(vb, entBits - remEnt, remEnt);
+      setBitsBE(vb, entBits - remEnt, c, remEnt);
+
+      const eSlice = vb.subarray(0, nbytes);
+      const hash = sha256(eSlice);
 
       // checksum = first csBits bits of SHA256(entropy), big-endian
       let csVal = 0;
       for (let bit = 0; bit < csBits; bit++) {
         const byteIdx = bit >> 3;
         const bitIdx = 7 - (bit & 7);
-        const b = (hash[byteIdx] >> bitIdx) & 1;
-        csVal = (csVal << 1) | b;
+        csVal = (csVal << 1) | ((hash[byteIdx] >> bitIdx) & 1);
       }
-
-      const checksummed = (E << BigInt(csBits)) | BigInt(csVal);
+      // checksum occupies bit positions [entBits .. entBits+csBits-1] of vb
+      setBitsBE(vb, entBits, csVal, csBits);
 
       const words = new Array(total);
-      for (let i = 0; i < n; i++) words[i] = wordlist[knownIndices[i]];
-      for (let i = n; i < total; i++) {
-        const shift = wordBits * BigInt(total - 1 - i);
-        const idx = Number((checksummed >> shift) & 0x7ffn);
-        words[i] = wordlist[idx];
+      for (let i = 0; i < total; i++) {
+        if (i < n) { words[i] = wordlist[knownIndices[i]]; }
+        else {
+          const p = 11 * i;                     // V bit start (word 0 = highest, MSB-first)
+          words[i] = wordlist[readBitsBE(vb, p, 11)];
+        }
       }
       yield words.join(' ');
     }
@@ -154,4 +180,4 @@
   const api = { sha256, completeMnemonicGen, totalFor };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   global.MnemCore = api;
-})(typeof window !== 'undefined' ? window : globalThis);
+})(typeof self !== 'undefined' ? self : (typeof window !== 'undefined' ? window : this));
