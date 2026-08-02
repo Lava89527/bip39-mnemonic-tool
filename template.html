@@ -1192,7 +1192,7 @@
   }
   function countValid(known, total){
     const e=freeEntropyBits(known,total).length;
-    return e<=53 ? Number(1n<<BigInt(e)) : Infinity;
+    return e<=53 ? Math.pow(2,e) : Infinity;
   }
   function* genRecover(known, list, total, cap){
     const N=total, EB=total===12?128:256, csBits=total===12?4:8;
@@ -1212,7 +1212,7 @@
     }
     const freeEB=[]; for(let q=0;q<EB;q++) if(!fixed[q]) freeEB.push(q);
     const e = freeEB.length;
-    const maxCounter = (e<=53) ? (1n<<BigInt(e)) : null;
+    const maxCounter = (e<=53) ? Math.pow(2,e) : null;
     const limit = (maxCounter!==null) ? Math.min(cap, Number(maxCounter)) : cap;
     const entBytes = new Uint8Array(nbytes);
     for(let counter=0; counter<limit; counter++){
