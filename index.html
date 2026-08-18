@@ -14714,6 +14714,37 @@ var qrcode = function() {
   const WL = { EN: WORDLIST_EN, ZH: WORDLIST_ZH, ZHT: WORDLIST_ZHT, JA: WORDLIST_JA, KO: WORDLIST_KO, ES: WORDLIST_ES, FR: WORDLIST_FR, IT: WORDLIST_IT, CS: WORDLIST_CS, PT: WORDLIST_PT };
   const WLM = {}; // lang -> { word: index }
   for (var _wlk in WL) { var _wl = WL[_wlk]; var _m = {}; for (var _i = 0; _i < _wl.length; _i++) _m[_wl[_i]] = _i; WLM[_wlk] = _m; }
+  // Scripts written WITHOUT word separators: Chinese (1 char/word) and Japanese
+  // (multi-char kana/kanji). European + Korean mnemonics use spaces, so they are
+  // NOT concatenative. Conversion of a concatenative source needs word
+  // segmentation because the words carry no delimiter.
+  var CONCAT_LANGS = { ZH: 1, ZHT: 1, JA: 1 };
+  function isConcatLang(l) { return !!CONCAT_LANGS[l]; }
+  // Longest word length per language, used to bound the greedy segmentation
+  // window for concatenative scripts (JA words can be several kana long).
+  var MAXWLEN = {};
+  for (var _kl in WL) { var _mx = 0; var _a = WL[_kl]; for (var _x = 0; _x < _a.length; _x++) { if (_a[_x].length > _mx) _mx = _a[_x].length; } MAXWLEN[_kl] = _mx; }
+  // Greedy longest-match segmentation of a whitespace-free run into word
+  // indices. Needed for concatenative scripts where words carry no delimiter.
+  // Tie-break favours the segmentation with the fewest words (most likely the
+  // intended one). Returns an array of indices, or undefined if not fully
+  // segmentable.
+  function segmentRun(text, map, maxLen) {
+    var n = text.length;
+    var dp = new Array(n + 1);
+    dp[0] = [];
+    for (var i = 0; i < n; i++) {
+      if (dp[i] === undefined) continue;
+      for (var L = 1; L <= maxLen && i + L <= n; L++) {
+        var w = text.substr(i, L);
+        if (map[w] !== undefined) {
+          var cand = dp[i].concat(map[w]);
+          if (dp[i + L] === undefined || cand.length < dp[i + L].length) dp[i + L] = cand;
+        }
+      }
+    }
+    return dp[n];
+  }
   var CJK_LANGS = { ZH: 1, ZHT: 1 };
   function isCJKLang(l) { return !!CJK_LANGS[l]; }
   function listFor(l) { return WL[l] || WL.EN; }
@@ -14745,16 +14776,19 @@ var qrcode = function() {
   function getTokens(){
     const raw = input.value.trim();
     if(!raw) return [];
-    const parts = raw.split(/\s+/);
-    if(isCJKLang(lang)){
+    if(isConcatLang(lang)){
+      const fromMap = mapFor(lang);
+      const maxLen = MAXWLEN[lang] || 12;
+      const parts = raw.split(/\s+/).filter(Boolean);
       const out=[];
-      for(const p of parts){
-        if(p.length>1){ for(const ch of p) out.push(ch); }
-        else if(p.length===1) out.push(p);
+      for(let i=0;i<parts.length;i++){
+        const idxs = segmentRun(parts[i], fromMap, maxLen);
+        if(idxs){ for(let k=0;k<idxs.length;k++) out.push(WL[lang][idxs[k]]); }
+        else { for(let j=0;j<parts[i].length;j++) out.push(parts[i][j]); }
       }
       return out;
     }
-    return parts;
+    return raw.split(/\s+/).filter(Boolean);
   }
   function currentToken(){
     const v = input.value;
@@ -14824,19 +14858,26 @@ var qrcode = function() {
   function convertTextBetweenLangs(text, fromL, toL){
     const fromMap = mapFor(fromL), toList = listFor(toL);
     let tokens;
-    if(isCJKLang(fromL)){
-      tokens=[];
-      const parts = text.trim().split(/\s+/).filter(Boolean);
-      for(let i=0;i<parts.length;i++){ const p=parts[i]; for(let j=0;j<p.length;j++) tokens.push(p[j]); }
+    if(isConcatLang(fromL)){
+      // Concatenative source (ZH=1 char, JA=multi-char kana, no separators):
+      // split off any whitespace, then greedy-segment each run into words.
+      const maxLen = MAXWLEN[fromL] || 12;
+      const runs = text.trim().split(/\s+/).filter(Boolean);
+      tokens = [];
+      for(let i=0;i<runs.length;i++){
+        const idxs = segmentRun(runs[i], fromMap, maxLen);
+        if(idxs){ for(let k=0;k<idxs.length;k++) tokens.push(toList[idxs[k]]); }
+        else { tokens.push(runs[i]); } // unsegmentable -> preserve literally
+      }
     } else {
-      tokens = text.trim().split(/\s+/).filter(Boolean);
+      const parts = text.trim().split(/\s+/).filter(Boolean);
+      tokens = [];
+      for(let i=0;i<parts.length;i++){
+        const idx = fromMap[parts[i]];
+        tokens.push(idx!==undefined ? toList[idx] : parts[i]);
+      }
     }
-    const out=[];
-    for(let i=0;i<tokens.length;i++){
-      const idx = fromMap[tokens[i]];
-      out.push(idx!==undefined ? toList[idx] : tokens[i]);
-    }
-    return out.join(' ');
+    return tokens.join(' ');
   }
   function convertInputsToLang(newLang){
     const fromL = lang, toL = newLang;
